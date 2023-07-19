@@ -1,7 +1,7 @@
 import { v4 as uuid } from 'uuid';
 import axios, { AxiosInstance } from 'axios';
 
-const API_URL = 'https://api.magellanic.one';
+const API_URL = 'https://api.magellanic.one/public-api/workloads';
 
 export class MagellanicClient {
   private readonly randomInitString: string;
@@ -18,7 +18,7 @@ export class MagellanicClient {
   }
 
   async authenticate() {
-    await this.axiosInstance.post(`workloads`, {
+    await this.axiosInstance.post(`auth`, {
       randomString: this.randomInitString,
     });
   }
