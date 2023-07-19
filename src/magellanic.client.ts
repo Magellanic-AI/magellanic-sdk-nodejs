@@ -18,7 +18,9 @@ export class MagellanicClient {
   }
 
   async authenticate() {
-    await axios.post(`workloads`, { randomString: this.randomInitString });
+    await this.axiosInstance.post(`workloads`, {
+      randomString: this.randomInitString,
+    });
   }
 
   validateAuthWebhookPayload(payload: any): {
