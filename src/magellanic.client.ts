@@ -21,9 +21,11 @@ export class MagellanicClient {
     await axios.post(`workloads`, { randomString: this.randomInitString });
   }
 
-  validateAuthWebhookPayload(payload: Record<string, unknown>): {
+  validateAuthWebhookPayload(payload: any): {
     result: boolean;
   } {
-    return { result: payload.randomString === this.randomInitString };
+    return {
+      result: payload && payload.randomString === this.randomInitString,
+    };
   }
 }
