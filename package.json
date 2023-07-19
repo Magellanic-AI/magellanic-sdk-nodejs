@@ -20,7 +20,7 @@
     }
   },
   "files": [
-    "dist"
+    "dist/**"
   ],
   "engines": {
     "node": ">=14.0.0"
