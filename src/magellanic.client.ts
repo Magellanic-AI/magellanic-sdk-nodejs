@@ -63,7 +63,7 @@ export class MagellanicClient {
         this.previousTokens = this.currentTokens;
         this.currentTokens = data.tokens;
         this.previousToken = this.currentToken;
-        this.currentToken = data.myToken;
+        this.currentToken = data.tokens[this.tdtiId];
         break;
       }
       case 'reauth': {
@@ -74,6 +74,26 @@ export class MagellanicClient {
         return false;
     }
     return true;
+  }
+
+  getMyToken() {
+    if (!this.currentToken) {
+      throw new Error('not initialized');
+    }
+    return this.currentToken;
+  }
+
+  validateRequest(tdtiId: string, token: string) {
+    if (!this.currentTokens) {
+      throw new Error('not initialized');
+    }
+    const currentToken = this.currentTokens[tdtiId];
+    if (currentToken !== token) {
+      const previousToken = this.previousTokens?.[tdtiId];
+      if (!previousToken) {
+        throw new Error('bad token');
+      }
+    }
   }
 
   private decryptPayload(payload: any) {
