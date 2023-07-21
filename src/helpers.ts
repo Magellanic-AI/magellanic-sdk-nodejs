@@ -6,7 +6,11 @@ const GCM_TAG_LENGTH = 16;
 
 export function encryptAes(data: string, key: string) {
   const iv = crypto.randomBytes(GCM_IV_LENGTH);
-  const cipher = crypto.createCipheriv(GCM_ALGORITHM, key, iv);
+  const cipher = crypto.createCipheriv(
+    GCM_ALGORITHM,
+    Buffer.from(key, 'hex'),
+    iv,
+  );
   return Buffer.concat([
     iv,
     cipher.update(data, 'utf8'),
@@ -25,7 +29,11 @@ export function decryptAes(encryptedData: string, key: string) {
   message.copy(tag, 0, message.length - GCM_TAG_LENGTH);
   message.copy(data, 0, GCM_IV_LENGTH);
 
-  const decipher = crypto.createDecipheriv(GCM_ALGORITHM, key, iv);
+  const decipher = crypto.createDecipheriv(
+    GCM_ALGORITHM,
+    Buffer.from(key, 'hex'),
+    iv,
+  );
   decipher.setAuthTag(tag);
 
   let decrypted = decipher.update(data, undefined, 'utf8');
