@@ -1,8 +1,10 @@
 import { v4 as uuid } from 'uuid';
 import axios, { AxiosInstance } from 'axios';
 import { decryptAes } from './helpers';
+import { Request } from 'express';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
+const TDTI_ID_HEADER_NAME = 'magellanic-tdti-id';
 
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
@@ -22,7 +24,7 @@ export class MagellanicClient {
     this.axiosInstance = axios.create({
       baseURL: API_URL,
       headers: {
-        'magellanic-tdti-id': tdtiId,
+        [TDTI_ID_HEADER_NAME]: tdtiId,
       },
     });
   }
@@ -83,7 +85,30 @@ export class MagellanicClient {
     return this.currentToken;
   }
 
-  validateRequest(tdtiId: string, token: string) {
+  generateHeaders(): Record<string, string> {
+    if (!this.currentToken) {
+      throw new Error('not initialized');
+    }
+    return {
+      Authorization: `Bearer ${this.currentToken}`,
+      TDTI_ID_HEADER: this.tdtiId,
+    };
+  }
+
+  validateRequest(req: Request) {
+    const tdtiId = req.header(TDTI_ID_HEADER_NAME);
+    if (!tdtiId) {
+      throw new Error('tdtiId header not defined');
+    }
+    const tokenHeader = req.header('Authorization');
+    if (!tokenHeader) {
+      throw new Error('Authorization header not defined');
+    }
+    const token = tokenHeader.split(' ')[1];
+    return this.validateToken(tdtiId, token);
+  }
+
+  validateToken(tdtiId: string, token: string) {
     if (!this.currentTokens) {
       throw new Error('not initialized');
     }
