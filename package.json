@@ -9,7 +9,7 @@
     "build:cjs": "tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
     "build:es": "tsc -p tsconfig.es.json && echo '{\"type\":\"module\"}' > dist/es/package.json",
     "build:types": "tsc -p tsconfig.types.json",
-    "docs": "typedoc --plugin typedoc-plugin-markdown src/index.ts\n"
+    "docs": "typedoc --excludePrivate --plugin typedoc-plugin-markdown src/index.ts"
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
