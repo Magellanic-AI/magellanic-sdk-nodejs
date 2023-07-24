@@ -6,6 +6,9 @@ import { Request } from 'express';
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
 const TDTI_ID_HEADER_NAME = 'magellanic-tdti-id';
 
+/**
+ * Magellanic SDK Client base class
+ */
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
   private authRandomString: string;
@@ -19,6 +22,12 @@ export class MagellanicClient {
   private currentToken?: string;
   private previousToken?: string;
 
+  /**
+   * The constructor of the "MagellanicClient" class.
+   *
+   * @param tdtiId unique TDTI ID assigned by Magellanic to the workload. Can be found on the workload's details page in
+   * Magellanic.
+   */
   constructor(private readonly tdtiId: string) {
     this.authRandomString = uuid();
     this.axiosInstance = axios.create({
@@ -29,15 +38,36 @@ export class MagellanicClient {
     });
   }
 
-  async authenticate(reauth = false) {
-    if (reauth) {
-      this.authRandomString = uuid();
-    }
+  /**
+   * Method used to authenticate the workload.
+   *
+   * <b>IMPORTANT: This method must be called after the webhook endpoint has been initialized. Magellanic will attempt
+   * to send an HTTP request during authentication, and the application must respond correctly to complete the
+   * authentication process.</b>
+   *
+   */
+  async authenticate() {
     await this.axiosInstance.post(`auth`, {
       randomString: this.authRandomString,
     });
   }
 
+  /**
+   * Method used to handle incoming webhook event. Its return value should be sent as a response.
+   *
+   * ```
+   * public webhooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
+   *     try {
+   *       const response = await magellanicClient.handleWebhook(req.body);
+   *       res.status(200).send(response);
+   *     } catch (error) {
+   *       next(error);
+   *     }
+   *   };
+   * ```
+   * @param payload request payload - Express.js Request object's body property
+   * @returns promise with a boolean indicating the validation status of the payload
+   */
   //TODO: errors handling
   async handleWebhook(payload: any): Promise<boolean> {
     if (!payload.action) {
@@ -69,7 +99,7 @@ export class MagellanicClient {
         break;
       }
       case 'reauth': {
-        await this.authenticate(true);
+        await this.reauthenticate();
         break;
       }
       default:
@@ -78,6 +108,11 @@ export class MagellanicClient {
     return true;
   }
 
+  /**
+   * Method used to obtain the latest workload's token.
+   *
+   * @returns the latest token of this workload
+   */
   getMyToken() {
     if (!this.currentToken) {
       throw new Error('not initialized');
@@ -85,6 +120,17 @@ export class MagellanicClient {
     return this.currentToken;
   }
 
+  /**
+   * Method used to generate required HTTP headers for requests between two workloads.
+   *
+   * ```
+   * await axios.post('.../external-app/example', payload, {
+   *    headers: magellanicClient.generateHeaders(),
+   * });
+   * ```
+   *
+   * @returns headers object
+   */
   generateHeaders(): Record<string, string> {
     if (!this.currentToken) {
       throw new Error('not initialized');
@@ -95,6 +141,13 @@ export class MagellanicClient {
     };
   }
 
+  /**
+   * Method used to validate request from another workload. It throws errors on bad requests and returns nothing if
+   * everything is as expected.
+   * If you don't want to pass Express.js Request object, see {@link validateToken} method.
+   *
+   * @param req Express.js Request object
+   */
   validateRequest(req: Request) {
     const tdtiId = req.header(TDTI_ID_HEADER_NAME);
     if (!tdtiId) {
@@ -108,6 +161,15 @@ export class MagellanicClient {
     return this.validateToken(tdtiId, token);
   }
 
+  /**
+   * Method used to validate token. It throws errors on bad requests and returns nothing if
+   * everything is as expected.
+   *
+   * See {@link validateRequest} method if using Express.js
+   *
+   * @param tdtiId unique sender's TDTI ID (acquired from the "magellanic-tdti-id" header)
+   * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
+   */
   validateToken(tdtiId: string, token: string) {
     if (!this.currentTokens) {
       throw new Error('not initialized');
@@ -119,6 +181,11 @@ export class MagellanicClient {
         throw new Error('bad token');
       }
     }
+  }
+
+  private reauthenticate() {
+    this.authRandomString = uuid();
+    return this.authenticate();
   }
 
   private decryptPayload(payload: any) {
