@@ -42,8 +42,8 @@ export class MagellanicClient {
    * Method used to authenticate the workload.
    *
    * <b>IMPORTANT: This method must be called after the webhook endpoint has been initialized. Magellanic will attempt
-   * to send an HTTP request during authentication, and the application must respond correctly to complete the
-   * authentication process.</b>
+   * to send an HTTP request during authentication and the application must be already able to respond correctly to
+   * complete the authentication process.</b>
    *
    */
   async authenticate() {
