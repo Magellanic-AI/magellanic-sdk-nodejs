@@ -35,13 +35,13 @@ The constructor of the "MagellanicClient" class.
 
 #### Defined in
 
-[magellanic-client.ts:31](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L31)
+[magellanic-client.ts:31](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L31)
 
 ## Methods
 
 ### authenticate
 
-▸ **authenticate**(): `Promise`<`void`\>
+▸ **authenticate**(): `Promise`<{ `authenticated`: `boolean` ; `reason?`: `string`  }\>
 
 Method used to authenticate the workload.
 
@@ -49,13 +49,15 @@ Method used to authenticate the workload.
 to send an HTTP request during authentication and the application must be already able to respond correctly to
 complete the authentication process.</b>
 
+Does not throw errors, so it's safe to use in event listener function.
+
 #### Returns
 
-`Promise`<`void`\>
+`Promise`<{ `authenticated`: `boolean` ; `reason?`: `string`  }\>
 
 #### Defined in
 
-[magellanic-client.ts:49](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L49)
+[magellanic-client.ts:51](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L51)
 
 ___
 
@@ -79,7 +81,7 @@ headers object
 
 #### Defined in
 
-[magellanic-client.ts:134](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L134)
+[magellanic-client.ts:156](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L156)
 
 ___
 
@@ -97,7 +99,7 @@ the latest token of this workload
 
 #### Defined in
 
-[magellanic-client.ts:116](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L116)
+[magellanic-client.ts:138](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L138)
 
 ___
 
@@ -116,6 +118,10 @@ public webhooks = async (req: Request, res: Response, next: NextFunction): Promi
       next(error);
     }
   };
+app.get('/magellanic-webhook', async (req: Request, res: Response) => {
+  const response = await magellanicClient.handleWebhook(req.body);
+  res.status(200).send(response);
+});
 ```
 
 #### Parameters
@@ -132,7 +138,7 @@ promise with a boolean indicating the validation status of the payload
 
 #### Defined in
 
-[magellanic-client.ts:72](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L72)
+[magellanic-client.ts:94](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L94)
 
 ___
 
@@ -156,7 +162,7 @@ If you don't want to pass Express.js Request object, see [validateToken](Magella
 
 #### Defined in
 
-[magellanic-client.ts:151](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L151)
+[magellanic-client.ts:173](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L173)
 
 ___
 
@@ -182,4 +188,4 @@ See [validateRequest](MagellanicClient.md#validaterequest) method if using Expre
 
 #### Defined in
 
-[magellanic-client.ts:173](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/48aaf1d/src/magellanic-client.ts#L173)
+[magellanic-client.ts:195](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/2a51d00/src/magellanic-client.ts#L195)
