@@ -1,5 +1,5 @@
 import { v4 as uuid } from 'uuid';
-import axios, { AxiosInstance } from 'axios';
+import axios, { AxiosInstance, isAxiosError } from 'axios';
 import { decryptAes } from './helpers';
 import { Request } from 'express';
 
@@ -45,11 +45,29 @@ export class MagellanicClient {
    * to send an HTTP request during authentication and the application must be already able to respond correctly to
    * complete the authentication process.</b>
    *
+   * Does not throw errors, so it's safe to use in event listener function.
+   *
    */
-  async authenticate() {
-    await this.axiosInstance.post(`auth`, {
-      randomString: this.authRandomString,
-    });
+  async authenticate(): Promise<{ authenticated: boolean; reason?: string }> {
+    try {
+      await this.axiosInstance.post(`auth`, {
+        randomString: this.authRandomString,
+      });
+      return {
+        authenticated: true,
+      };
+    } catch (err) {
+      if (isAxiosError(err)) {
+        return {
+          authenticated: false,
+          reason: err.message,
+        };
+      } else {
+        return {
+          authenticated: false,
+        };
+      }
+    }
   }
 
   /**
@@ -64,6 +82,10 @@ export class MagellanicClient {
    *       next(error);
    *     }
    *   };
+   * app.get('/magellanic-webhook', async (req: Request, res: Response) => {
+   *   const response = await magellanicClient.handleWebhook(req.body);
+   *   res.status(200).send(response);
+   * });
    * ```
    * @param payload request payload - Express.js Request object's body property
    * @returns promise with a boolean indicating the validation status of the payload
