@@ -55,7 +55,7 @@ export class MagellanicClient {
   /**
    * Method used to handle incoming webhook event. Its return value should be sent as a response.
    *
-   * ```
+   * ```ts
    * public webhooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
    *     try {
    *       const response = await magellanicClient.handleWebhook(req.body);
@@ -123,7 +123,7 @@ export class MagellanicClient {
   /**
    * Method used to generate required HTTP headers for requests between two workloads.
    *
-   * ```
+   * ```ts
    * await axios.post('.../external-app/example', payload, {
    *    headers: magellanicClient.generateHeaders(),
    * });
