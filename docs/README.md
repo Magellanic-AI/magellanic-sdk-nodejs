@@ -62,7 +62,7 @@ server.on('listening', async () => {
   console.log(`🚀 App listening on the port 3000`);
   const result = await magellanicClient.authenticate();
   if (!result.authenticated) {
-    console.log(result.message);
+    console.log(result.reason);
     server.close();
   }
 });
