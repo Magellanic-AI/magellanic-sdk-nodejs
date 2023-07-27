@@ -1,1 +1,1 @@
-export * from './magellanic.client';
+export * from './magellanic-client';

@@ -35,7 +35,7 @@ The constructor of the "MagellanicClient" class.
 
 #### Defined in
 
-[magellanic.client.ts:31](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L31)
+[magellanic-client.ts:31](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L31)
 
 ## Methods
 
@@ -55,7 +55,7 @@ authentication process.</b>
 
 #### Defined in
 
-[magellanic.client.ts:49](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L49)
+[magellanic-client.ts:49](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L49)
 
 ___
 
@@ -79,7 +79,7 @@ headers object
 
 #### Defined in
 
-[magellanic.client.ts:134](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L134)
+[magellanic-client.ts:134](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L134)
 
 ___
 
@@ -97,7 +97,7 @@ the latest token of this workload
 
 #### Defined in
 
-[magellanic.client.ts:116](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L116)
+[magellanic-client.ts:116](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L116)
 
 ___
 
@@ -132,7 +132,7 @@ promise with a boolean indicating the validation status of the payload
 
 #### Defined in
 
-[magellanic.client.ts:72](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L72)
+[magellanic-client.ts:72](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L72)
 
 ___
 
@@ -156,7 +156,7 @@ If you don't want to pass Express.js Request object, see [validateToken](Magella
 
 #### Defined in
 
-[magellanic.client.ts:151](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L151)
+[magellanic-client.ts:151](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L151)
 
 ___
 
@@ -182,4 +182,4 @@ See [validateRequest](MagellanicClient.md#validaterequest) method if using Expre
 
 #### Defined in
 
-[magellanic.client.ts:173](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/519fc13/src/magellanic.client.ts#L173)
+[magellanic-client.ts:173](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/e4d4093/src/magellanic-client.ts#L173)
