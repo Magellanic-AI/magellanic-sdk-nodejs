@@ -16,6 +16,8 @@ npm install -save .../magellanic-sdk
 
 ## Usage
 
+> _**Note:**_ MagellanicClient documentation generated using [typedoc](https://github.com/TypeStrong/typedoc) can be found [here](docs/classes/MagellanicClient.md).
+
 #### Examples
 
 An example Node.js Express application that utilizes all Magellanic SDK for Node.js features can be found at ...
