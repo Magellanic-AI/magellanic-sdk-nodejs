@@ -30,10 +30,16 @@ export class MagellanicClient {
   /**
    * The constructor of the "MagellanicClient" class.
    *
-   * @param tdtiId unique TDTI ID assigned by Magellanic to the workload. Can be found on the workload's details page in
    * Magellanic.
+   * @param clientOptions
    */
-  constructor({ projectKey, provider, name }: ClientOptions) {
+  constructor(clientOptions?: ClientOptions) {
+    let projectKey;
+    let name;
+    let provider;
+    if (clientOptions) {
+      ({ projectKey, name, provider } = clientOptions);
+    }
     if (!projectKey) {
       projectKey = process.env.MAGELLANIC_PROJECT_KEY;
       if (!projectKey) {

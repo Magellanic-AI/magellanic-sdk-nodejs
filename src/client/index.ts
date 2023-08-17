@@ -1,2 +1,2 @@
 export * from './magellanic-client';
-export * from './interfaces'
+export * from './interfaces';
