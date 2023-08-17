@@ -1,17 +1,22 @@
 import { v4 as uuid } from 'uuid';
 import axios, { AxiosInstance, isAxiosError } from 'axios';
-import { decryptAes } from './helpers';
+import { decryptAes } from '../helpers';
 import { Request } from 'express';
+import { ClientOptions } from './interfaces';
+import { readFileSync } from 'fs';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
-const TDTI_ID_HEADER_NAME = 'magellanic-tdti-id';
+const ID_HEADER_NAME = 'magellanic-workload-id';
 
 /**
  * Magellanic SDK Client base class
  */
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
-  private authRandomString: string;
+  private readonly id: string;
+  private readonly name: string;
+  private readonly provider: string;
+  private readonly projectKey: string;
 
   private currentTokensSecret?: string;
   private previousTokensSecret?: string;
@@ -28,12 +33,37 @@ export class MagellanicClient {
    * @param tdtiId unique TDTI ID assigned by Magellanic to the workload. Can be found on the workload's details page in
    * Magellanic.
    */
-  constructor(private readonly tdtiId: string) {
-    this.authRandomString = uuid();
+  constructor({ projectKey, provider, name }: ClientOptions) {
+    if (!projectKey) {
+      projectKey = process.env.MAGELLANIC_PROJECT_KEY;
+      if (!projectKey) {
+        throw new Error('Magellanic project key is undefined');
+      }
+    }
+    if (!provider) {
+      provider = 'k8s';
+      // TODO: support other providers
+      // provider = process.env.MAGELLANIC_PROVIDER_TYPE;
+      // TODO: detect provider properly
+      // if (!provider) {
+      //   provider = 'k8s';
+      // }
+    }
+    const id = uuid();
+    if (!name) {
+      name = process.env.MAGELLANIC_WORKLOAD_NAME;
+      if (!name) {
+        name = id;
+      }
+    }
+    this.id = id;
+    this.name = name;
+    this.provider = provider;
+    this.projectKey = projectKey;
     this.axiosInstance = axios.create({
       baseURL: API_URL,
       headers: {
-        [TDTI_ID_HEADER_NAME]: tdtiId,
+        [ID_HEADER_NAME]: id,
       },
     });
   }
@@ -48,10 +78,27 @@ export class MagellanicClient {
    * Does not throw errors, so it's safe to use in event listener function.
    *
    */
-  async authenticate(): Promise<{ authenticated: boolean; reason?: string }> {
+  async authenticate(): Promise<{ authenticated: boolean; reason?: any }> {
+    let token;
+    if (this.provider === 'k8s') {
+      try {
+        token = readFileSync(
+          '/var/run/secrets/kubernetes.io/serviceaccount/token',
+          { encoding: 'utf8' },
+        );
+      } catch (err) {
+        return {
+          authenticated: false,
+          reason: err,
+        };
+      }
+    }
     try {
       await this.axiosInstance.post(`auth`, {
-        randomString: this.authRandomString,
+        projectKey: this.projectKey,
+        providerType: this.provider,
+        name: this.name,
+        token,
       });
       return {
         authenticated: true,
@@ -68,66 +115,6 @@ export class MagellanicClient {
         };
       }
     }
-  }
-
-  /**
-   * Method used to handle incoming webhook event. Its return value should be sent as a response.
-   *
-   * ```ts
-   * public webhooks = async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-   *     try {
-   *       const response = await magellanicClient.handleWebhook(req.body);
-   *       res.status(200).send(response);
-   *     } catch (error) {
-   *       next(error);
-   *     }
-   *   };
-   * app.get('/magellanic-webhook', async (req: Request, res: Response) => {
-   *   const response = await magellanicClient.handleWebhook(req.body);
-   *   res.status(200).send(response);
-   * });
-   * ```
-   * @param payload request payload - Express.js Request object's body property
-   * @returns promise with a boolean indicating the validation status of the payload
-   */
-  //TODO: errors handling
-  async handleWebhook(payload: any): Promise<boolean> {
-    if (!payload.action) {
-      return false;
-    }
-    switch (payload.action) {
-      case 'auth': {
-        this.secret = payload.secret;
-        return payload && payload.randomString === this.authRandomString;
-      }
-      case 'init': {
-        const data = this.decryptPayload(payload);
-        this.secret = data.secret;
-        if (data.state) {
-          this.currentTokensSecret = data.state.tokensSecret;
-          this.currentTokens = data.state.tokens;
-        }
-        break;
-      }
-      case 'rotateTokens': {
-        const data = this.decryptPayload(payload);
-        this.secret = data.secret;
-        this.previousTokensSecret = this.currentTokensSecret;
-        this.currentTokensSecret = data.tokensSecret;
-        this.previousTokens = this.currentTokens;
-        this.currentTokens = data.tokens;
-        this.previousToken = this.currentToken;
-        this.currentToken = data.tokens[this.tdtiId];
-        break;
-      }
-      case 'reauth': {
-        await this.reauthenticate();
-        break;
-      }
-      default:
-        return false;
-    }
-    return true;
   }
 
   /**
@@ -159,7 +146,7 @@ export class MagellanicClient {
     }
     return {
       Authorization: `Bearer ${this.currentToken}`,
-      TDTI_ID_HEADER: this.tdtiId,
+      [ID_HEADER_NAME]: this.id,
     };
   }
 
@@ -171,7 +158,7 @@ export class MagellanicClient {
    * @param req Express.js Request object
    */
   validateRequest(req: Request) {
-    const tdtiId = req.header(TDTI_ID_HEADER_NAME);
+    const tdtiId = req.header(ID_HEADER_NAME);
     if (!tdtiId) {
       throw new Error('tdtiId header not defined');
     }
@@ -206,7 +193,6 @@ export class MagellanicClient {
   }
 
   private reauthenticate() {
-    this.authRandomString = uuid();
     return this.authenticate();
   }
 
