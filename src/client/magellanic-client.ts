@@ -1,9 +1,16 @@
 import { v4 as uuid } from 'uuid';
 import axios, { AxiosInstance, isAxiosError } from 'axios';
-import { decryptAes } from '../helpers';
 import { Request } from 'express';
-import { ClientOptions } from './interfaces';
+import { ClientOptions } from './types';
 import { readFileSync } from 'fs';
+import { Sign } from '../wasm/dilithium-service.interface';
+import Go from '../wasm/wasm-exec.helper';
+import { readFile } from 'fs/promises';
+import { resolve } from 'path';
+import { DilithiumData } from './types/dilithium-data.interface';
+import { AuthPayload } from './types/auth-payload.interface';
+import { Provider } from './types/provider.type';
+import { State } from './types/state.interface';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
 const ID_HEADER_NAME = 'magellanic-workload-id';
@@ -13,19 +20,17 @@ const ID_HEADER_NAME = 'magellanic-workload-id';
  */
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
-  private readonly id: string;
+  private readonly tdtiId: string;
   private readonly name: string;
-  private readonly provider: string;
+  private readonly provider: Provider;
   private readonly projectKey: string;
 
-  private currentTokensSecret?: string;
-  private previousTokensSecret?: string;
+  private state?: State;
+  private prevState?: State;
 
-  private secret?: string;
-  private currentTokens?: Record<string, string>;
-  private previousTokens?: Record<string, string>;
-  private currentToken?: string;
-  private previousToken?: string;
+  private dilithiumSign?: Sign;
+  private dilithiumData?: DilithiumData;
+  private nextPullTimeoutId?: number;
 
   /**
    * The constructor of the "MagellanicClient" class.
@@ -62,14 +67,14 @@ export class MagellanicClient {
         name = id;
       }
     }
-    this.id = id;
+    this.tdtiId = `${projectKey}/${id}`;
     this.name = name;
-    this.provider = provider;
+    this.provider = <Provider>provider;
     this.projectKey = projectKey;
     this.axiosInstance = axios.create({
       baseURL: API_URL,
       headers: {
-        [ID_HEADER_NAME]: id,
+        [ID_HEADER_NAME]: this.tdtiId,
       },
     });
   }
@@ -84,7 +89,7 @@ export class MagellanicClient {
    * Does not throw errors, so it's safe to use in event listener function.
    *
    */
-  async authenticate(): Promise<{ authenticated: boolean; reason?: any }> {
+  async authenticate(): Promise<{ initialized: boolean; reason?: any }> {
     let token;
     if (this.provider === 'k8s') {
       try {
@@ -94,30 +99,36 @@ export class MagellanicClient {
         );
       } catch (err) {
         return {
-          authenticated: false,
+          initialized: false,
           reason: err,
         };
       }
     }
     try {
-      await this.axiosInstance.post(`auth`, {
+      const payload: AuthPayload = {
         projectKey: this.projectKey,
         providerType: this.provider,
         name: this.name,
         token,
-      });
+      };
+
+      const response = await this.axiosInstance.post(`auth`, payload);
+      if (!this.dilithiumData) {
+        this.dilithiumData = response.data;
+      }
+      await this.pullTokens();
       return {
-        authenticated: true,
+        initialized: true,
       };
     } catch (err) {
       if (isAxiosError(err)) {
         return {
-          authenticated: false,
-          reason: err.message,
+          initialized: false,
+          reason: { message: err.message, response: err.response?.data },
         };
       } else {
         return {
-          authenticated: false,
+          initialized: false,
         };
       }
     }
@@ -129,10 +140,10 @@ export class MagellanicClient {
    * @returns the latest token of this workload
    */
   getMyToken() {
-    if (!this.currentToken) {
+    if (!this.state) {
       throw new Error('not initialized');
     }
-    return this.currentToken;
+    return this.state.tokens[this.tdtiId];
   }
 
   /**
@@ -147,12 +158,12 @@ export class MagellanicClient {
    * @returns headers object
    */
   generateHeaders(): Record<string, string> {
-    if (!this.currentToken) {
+    if (!this.state) {
       throw new Error('not initialized');
     }
     return {
-      Authorization: `Bearer ${this.currentToken}`,
-      [ID_HEADER_NAME]: this.id,
+      Authorization: `Bearer ${this.getMyToken()}`,
+      [ID_HEADER_NAME]: this.tdtiId,
     };
   }
 
@@ -185,28 +196,61 @@ export class MagellanicClient {
    * @param tdtiId unique sender's TDTI ID (acquired from the "magellanic-tdti-id" header)
    * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
    */
-  validateToken(tdtiId: string, token: string) {
-    if (!this.currentTokens) {
+  async validateToken(tdtiId: string, token: string) {
+    if (!this.state) {
       throw new Error('not initialized');
     }
-    const currentToken = this.currentTokens[tdtiId];
-    if (currentToken !== token) {
-      const previousToken = this.previousTokens?.[tdtiId];
-      if (!previousToken) {
-        throw new Error('bad token');
+    if (this.state.tokens[tdtiId] !== token) {
+      if (this.prevState?.tokens[tdtiId] !== token) {
+        await this.pullTokens();
+        if (this.state.tokens[tdtiId] !== token) {
+          if (this.prevState?.tokens[tdtiId] !== token) {
+            throw new Error('bad token');
+          }
+        }
       }
     }
   }
 
-  private reauthenticate() {
-    return this.authenticate();
+  // TODO: handle errors
+  private async pullTokens() {
+    clearTimeout(this.nextPullTimeoutId);
+    const payload = await this.createIdentityPayload();
+    const response = await this.axiosInstance.post('pull-tokens', payload);
+    this.state = response.data.state;
+    if (response.data.prevState) {
+      this.prevState = response.data.prevState;
+    }
+    setTimeout(
+      () => this.pullTokens(),
+      new Date(this.state!.nextRotation).getTime() - new Date().getTime(),
+    );
   }
 
-  private decryptPayload(payload: any) {
-    if (!this.secret) {
-      throw new Error('secret not set');
+  private async createIdentityPayload() {
+    if (!this.dilithiumSign) {
+      const go = new Go();
+      const buf = await readFile(
+        resolve(__dirname, 'wasm', 'dilithium-ext.wasm'),
+      );
+      const wasm = await WebAssembly.instantiate(buf, go.importObject);
+      await go.run(wasm.instance);
+      // @ts-ignore
+      const { mglSign } = globalThis;
+      this.dilithiumSign = mglSign;
     }
-    const decrypted = decryptAes(payload.encrypted, this.secret);
-    return JSON.parse(decrypted);
+    const message = new Date().toISOString();
+    const response = this.dilithiumSign!(
+      this.dilithiumData!.mode,
+      this.dilithiumData!.privateKey,
+      message,
+    );
+    if ('error' in response) {
+      throw new Error(response.error);
+    }
+    return {
+      signature: response.signature,
+      message,
+    };
   }
 }

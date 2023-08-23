@@ -6,7 +6,8 @@
     "rootDir": "src",
     "strict": true,
     "downlevelIteration": true,
-    "types": [ "node" ]
+    "types": [ "node" ],
+    "allowJs": true
   },
   "include": [
     "src"
