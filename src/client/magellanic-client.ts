@@ -234,7 +234,7 @@ export class MagellanicClient {
         resolve(__dirname, 'wasm', 'dilithium-ext.wasm'),
       );
       const wasm = await WebAssembly.instantiate(buf, go.importObject);
-      await go.run(wasm.instance);
+      go.run(wasm.instance);
       // @ts-ignore
       const { mglSign } = globalThis;
       this.dilithiumSign = mglSign;
