@@ -218,19 +218,13 @@ export class MagellanicClient {
     clearTimeout(this.nextPullTimeoutId);
     const payload = await this.createIdentityPayload();
     const response = await this.axiosInstance.post('pull-tokens', payload);
-    console.log({ response });
     this.state = response.data.state;
     if (response.data.prevState) {
       this.prevState = response.data.prevState;
     }
-    console.log({
-      timeout:
-        new Date(this.state!.nextRotation).getTime() - new Date().getTime(),
-    });
-    setTimeout(
-      () => this.pullTokens(),
-      new Date(this.state!.nextRotation).getTime() - new Date().getTime(),
-    );
+    const timeout =
+      new Date(this.state!.nextRotation).getTime() - new Date().getTime();
+    setTimeout(() => this.pullTokens(), timeout > 0 ? timeout : 60 * 1000);
   }
 
   private async createIdentityPayload() {
@@ -244,7 +238,6 @@ export class MagellanicClient {
       // @ts-ignore
       const { mglSign } = globalThis;
       this.dilithiumSign = mglSign;
-      console.log(4);
     }
     const message = new Date().toISOString();
     const response = this.dilithiumSign!(
