@@ -89,7 +89,7 @@ export class MagellanicClient {
    * Does not throw errors, so it's safe to use in event listener function.
    *
    */
-  async authenticate(): Promise<{ initialized: boolean; reason?: any }> {
+  async authenticate(): Promise<{ authenticated: boolean; reason?: any }> {
     let token;
     if (this.provider === 'k8s') {
       try {
@@ -99,7 +99,7 @@ export class MagellanicClient {
         );
       } catch (err) {
         return {
-          initialized: false,
+          authenticated: false,
           reason: err,
         };
       }
@@ -118,17 +118,17 @@ export class MagellanicClient {
       }
       await this.pullTokens();
       return {
-        initialized: true,
+        authenticated: true,
       };
     } catch (err) {
       if (isAxiosError(err)) {
         return {
-          initialized: false,
+          authenticated: false,
           reason: { message: err.message, response: err.response?.data },
         };
       } else {
         return {
-          initialized: false,
+          authenticated: false,
         };
       }
     }
