@@ -223,6 +223,10 @@ export class MagellanicClient {
     if (response.data.prevState) {
       this.prevState = response.data.prevState;
     }
+    console.log({
+      timeout:
+        new Date(this.state!.nextRotation).getTime() - new Date().getTime(),
+    });
     setTimeout(
       () => this.pullTokens(),
       new Date(this.state!.nextRotation).getTime() - new Date().getTime(),
@@ -232,27 +236,22 @@ export class MagellanicClient {
   private async createIdentityPayload() {
     if (!this.dilithiumSign) {
       const go = new Go();
-      console.log(1);
       const buf = await readFile(
         resolve(__dirname, '..', '..', 'wasm', 'dilithium-ext.wasm'),
       );
-      console.log(2);
       const wasm = await WebAssembly.instantiate(buf, go.importObject);
-      console.log(3);
       go.run(wasm.instance);
       // @ts-ignore
       const { mglSign } = globalThis;
       this.dilithiumSign = mglSign;
       console.log(4);
     }
-    console.log(5);
     const message = new Date().toISOString();
     const response = this.dilithiumSign!(
       this.dilithiumData!.mode,
       this.dilithiumData!.privateKey,
       message,
     );
-    console.log(6);
     if ('error' in response) {
       throw new Error(response.error);
     }
