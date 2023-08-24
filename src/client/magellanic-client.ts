@@ -129,6 +129,7 @@ export class MagellanicClient {
       } else {
         return {
           authenticated: false,
+          reason: err,
         };
       }
     }
