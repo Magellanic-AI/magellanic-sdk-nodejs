@@ -234,7 +234,7 @@ export class MagellanicClient {
       const go = new Go();
       console.log(1);
       const buf = await readFile(
-        resolve(__dirname, 'wasm', 'dilithium-ext.wasm'),
+        resolve(__dirname, '..', '..', 'wasm', 'dilithium-ext.wasm'),
       );
       console.log(2);
       const wasm = await WebAssembly.instantiate(buf, go.importObject);
