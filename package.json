@@ -5,11 +5,13 @@
   "scripts": {
     "prepare": "yarn build",
     "prepack": "yarn build",
-    "build": "rimraf dist && concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
+    "build": "rimraf dist && concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types' 'yarn:assets:cjs' 'yarn:assets:es'",
     "build:cjs": "tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
     "build:es": "tsc -p tsconfig.es.json && echo '{\"type\":\"module\"}' > dist/es/package.json",
     "build:types": "tsc -p tsconfig.types.json",
-    "docs": "typedoc --excludePrivate --plugin typedoc-plugin-markdown src/index.ts"
+    "docs": "typedoc --excludePrivate --plugin typedoc-plugin-markdown src/index.ts",
+    "assets:cjs": "cpx 'src/wasm/dilithium-ext.wasm' 'dist/cjs/wasm'",
+    "assets:es": "cpx 'src/wasm/dilithium-ext.wasm' 'dist/es/wasm'"
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
@@ -41,6 +43,7 @@
     "@typescript-eslint/eslint-plugin": "^6.1.0",
     "@typescript-eslint/parser": "^6.1.0",
     "concurrently": "^8.2.0",
+    "cpx": "^1.5.0",
     "eslint": "^8.47.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-import-resolver-typescript": "^3.5.5",
