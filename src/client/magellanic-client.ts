@@ -217,6 +217,7 @@ export class MagellanicClient {
     clearTimeout(this.nextPullTimeoutId);
     const payload = await this.createIdentityPayload();
     const response = await this.axiosInstance.post('pull-tokens', payload);
+    console.log({ response });
     this.state = response.data.state;
     if (response.data.prevState) {
       this.prevState = response.data.prevState;
