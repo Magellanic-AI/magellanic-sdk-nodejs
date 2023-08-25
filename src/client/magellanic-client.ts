@@ -176,6 +176,8 @@ export class MagellanicClient {
    * @param req Express.js Request object
    */
   validateRequest(req: Request) {
+    console.log(req.headers);
+    console.log(ID_HEADER_NAME);
     const tdtiId = req.header(ID_HEADER_NAME);
     if (!tdtiId) {
       throw new Error('tdtiId header not defined');
