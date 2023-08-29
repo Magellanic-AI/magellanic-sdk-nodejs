@@ -3,17 +3,20 @@ import axios, { AxiosInstance, isAxiosError } from 'axios';
 import { Request } from 'express';
 import { ClientOptions } from './types';
 import { readFileSync } from 'fs';
-import { Sign } from '../wasm/dilithium-service.interface';
-import Go from '../wasm/wasm-exec.helper';
+import Go from '../crypto/wasm-exec.helper';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
 import { DilithiumData } from './types/dilithium-data.interface';
 import { AuthPayload } from './types/auth-payload.interface';
 import { Provider } from './types/provider.type';
 import { State } from './types/state.interface';
+import {
+  CryptoService,
+  DilithiumMode,
+} from '../crypto/crypto-service.interface';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
-const ID_HEADER_NAME = 'magellanic-workload-id';
+const TDTI_ID_HEADER_NAME = 'magellanic-tdti-id';
 
 /**
  * Magellanic SDK Client base class
@@ -28,7 +31,7 @@ export class MagellanicClient {
   private state?: State;
   private prevState?: State;
 
-  private dilithiumSign?: Sign;
+  private cryptoService?: CryptoService;
   private dilithiumData?: DilithiumData;
   private nextPullTimeoutId?: number;
 
@@ -74,7 +77,7 @@ export class MagellanicClient {
     this.axiosInstance = axios.create({
       baseURL: API_URL,
       headers: {
-        [ID_HEADER_NAME]: this.tdtiId,
+        [TDTI_ID_HEADER_NAME]: this.tdtiId,
       },
     });
   }
@@ -116,6 +119,7 @@ export class MagellanicClient {
       if (!this.dilithiumData) {
         this.dilithiumData = response.data;
       }
+      await this.instantiateWasm();
       await this.pullTokens();
       return {
         authenticated: true,
@@ -164,7 +168,7 @@ export class MagellanicClient {
     }
     return {
       Authorization: `Bearer ${this.getMyToken()}`,
-      [ID_HEADER_NAME]: this.tdtiId,
+      [TDTI_ID_HEADER_NAME]: this.tdtiId,
     };
   }
 
@@ -176,7 +180,7 @@ export class MagellanicClient {
    * @param req Express.js Request object
    */
   validateRequest(req: Request) {
-    const tdtiId = req.header(ID_HEADER_NAME);
+    const tdtiId = req.header(TDTI_ID_HEADER_NAME);
     if (!tdtiId) {
       throw new Error('tdtiId header not defined');
     }
@@ -213,6 +217,82 @@ export class MagellanicClient {
     }
   }
 
+  async kyberGenerateKeys() {
+    await this.instantiateWasm();
+    const kyberGenerateKeysResponse = this.cryptoService!.kyberGenerateKeys();
+    if ('error' in kyberGenerateKeysResponse) {
+      throw new Error(kyberGenerateKeysResponse.error);
+    }
+    return kyberGenerateKeysResponse;
+  }
+
+  async kyberEncrypt(publicKey: string) {
+    await this.instantiateWasm();
+    const kyberEncryptResponse = this.cryptoService!.kyberEncrypt(publicKey);
+    if ('error' in kyberEncryptResponse) {
+      throw new Error(kyberEncryptResponse.error);
+    }
+    return kyberEncryptResponse;
+  }
+
+  async kyberDecrypt(privateKey: string, ciphertext: string) {
+    await this.instantiateWasm();
+    const kyberDecryptResponse = this.cryptoService!.kyberDecrypt(
+      privateKey,
+      ciphertext,
+    );
+    if ('error' in kyberDecryptResponse) {
+      throw new Error(kyberDecryptResponse.error);
+    }
+    return kyberDecryptResponse;
+  }
+
+  async dilithiumGenerateKeys(mode: DilithiumMode) {
+    await this.instantiateWasm();
+    const dilithiumGenerateKeysResponse =
+      this.cryptoService!.dilithiumGenerateKeys(mode);
+    if ('error' in dilithiumGenerateKeysResponse) {
+      throw new Error(dilithiumGenerateKeysResponse.error);
+    }
+    return dilithiumGenerateKeysResponse;
+  }
+
+  async dilithiumSign(
+    mode: DilithiumMode,
+    privateKey: string,
+    message: string,
+  ) {
+    await this.instantiateWasm();
+    const dilithiumSignResponse = this.cryptoService!.dilithiumSign(
+      mode,
+      privateKey,
+      message,
+    );
+    if ('error' in dilithiumSignResponse) {
+      throw new Error(dilithiumSignResponse.error);
+    }
+    return dilithiumSignResponse;
+  }
+
+  async dilithiumVerify(
+    mode: DilithiumMode,
+    publicKey: string,
+    message: string,
+    signature: string,
+  ) {
+    await this.instantiateWasm();
+    const dilithiumVerifyResponse = this.cryptoService!.dilithiumVerify(
+      mode,
+      publicKey,
+      message,
+      signature,
+    );
+    if ('error' in dilithiumVerifyResponse) {
+      throw new Error(dilithiumVerifyResponse.error);
+    }
+    return dilithiumVerifyResponse;
+  }
+
   // TODO: handle errors
   private async pullTokens() {
     clearTimeout(this.nextPullTimeoutId);
@@ -228,19 +308,8 @@ export class MagellanicClient {
   }
 
   private async createIdentityPayload() {
-    if (!this.dilithiumSign) {
-      const go = new Go();
-      const buf = await readFile(
-        resolve(__dirname, '..', '..', 'wasm', 'dilithium-ext.wasm'),
-      );
-      const wasm = await WebAssembly.instantiate(buf, go.importObject);
-      go.run(wasm.instance);
-      // @ts-ignore
-      const { mglSign } = globalThis;
-      this.dilithiumSign = mglSign;
-    }
     const message = new Date().toISOString();
-    const response = this.dilithiumSign!(
+    const response = this.cryptoService!.dilithiumSign(
       this.dilithiumData!.mode,
       this.dilithiumData!.privateKey,
       message,
@@ -252,5 +321,38 @@ export class MagellanicClient {
       signature: response.signature,
       message,
     };
+  }
+
+  private async instantiateWasm() {
+    if (!this.cryptoService) {
+      const go = new Go();
+      const buf = await readFile(
+        resolve(__dirname, '..', '..', 'crypto', 'crypto-ext.wasm'),
+      );
+      const wasm = await WebAssembly.instantiate(buf, go.importObject);
+      go.run(wasm.instance);
+      const {
+        // @ts-ignore
+        mglDilithiumGenerateKeys,
+        // @ts-ignore
+        mglDilithiumSign,
+        // @ts-ignore
+        mglDilithiumVerify,
+        // @ts-ignore
+        mglKyberGenerateKeys,
+        // @ts-ignore
+        mglKyberEncrypt,
+        // @ts-ignore
+        mglKyberDecrypt,
+      } = globalThis;
+      this.cryptoService = {
+        dilithiumGenerateKeys: mglDilithiumGenerateKeys,
+        dilithiumSign: mglDilithiumSign,
+        dilithiumVerify: mglDilithiumVerify,
+        kyberGenerateKeys: mglKyberGenerateKeys,
+        kyberEncrypt: mglKyberEncrypt,
+        kyberDecrypt: mglKyberDecrypt,
+      };
+    }
   }
 }
