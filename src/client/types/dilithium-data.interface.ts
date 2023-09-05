@@ -1,4 +1,6 @@
+import { DilithiumMode } from '../../crypto';
+
 export interface DilithiumData {
   privateKey: string;
-  mode: 2 | 3;
+  mode: DilithiumMode;
 }

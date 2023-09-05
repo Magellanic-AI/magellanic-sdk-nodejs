@@ -11,9 +11,23 @@ import { AuthPayload } from './types/auth-payload.interface';
 import { Provider } from './types/provider.type';
 import { State } from './types/state.interface';
 import {
-  CryptoService,
+  ProjectKeyMissingError,
+  AuthenticateError,
+  NotInitializedError,
+  RequestValidationError,
+  TokenValidationError,
+  WasmError,
+} from './errors';
+import { CryptoService } from '../crypto/types/interfaces/crypto-service.interface';
+import {
+  DilithiumGenerateKeysResponse,
+  DilithiumSignResponse,
+  DilithiumVerifyResponse,
+  KyberDecryptResponse,
+  KyberEncryptResponse,
+  KyberGenerateKeysResponse,
   DilithiumMode,
-} from '../crypto/crypto-service.interface';
+} from '../crypto';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
 const TDTI_ID_HEADER_NAME = 'magellanic-tdti-id';
@@ -36,10 +50,30 @@ export class MagellanicClient {
   private nextPullTimeoutId?: number;
 
   /**
+   * A shorthand for
+   * ```ts
+   * const magellanicClient = new MagellanicClient(clientOptions);
+   * await magellanicClient.authenticate();
+   * ```
+   *
+   * @param clientOptions
+   * @throws {@link AuthenticateError}
+   * @throws {@link ProjectKeyMissingError} if projectKey is missing
+   * @returns authenticated {@link MagellanicClient} instance
+   */
+  static async createClient(
+    clientOptions?: ClientOptions,
+  ): Promise<MagellanicClient> {
+    const client = new MagellanicClient(clientOptions);
+    await client.authenticate();
+    return client;
+  }
+
+  /**
    * The constructor of the "MagellanicClient" class.
    *
-   * Magellanic.
    * @param clientOptions
+   * @throws {@link ProjectKeyMissingError} if projectKey is missing
    */
   constructor(clientOptions?: ClientOptions) {
     let projectKey;
@@ -51,7 +85,7 @@ export class MagellanicClient {
     if (!projectKey) {
       projectKey = process.env.MAGELLANIC_PROJECT_KEY;
       if (!projectKey) {
-        throw new Error('Magellanic project key is undefined');
+        throw new ProjectKeyMissingError();
       }
     }
     if (!provider) {
@@ -85,26 +119,22 @@ export class MagellanicClient {
   /**
    * Method used to authenticate the workload.
    *
-   * <b>IMPORTANT: This method must be called after the webhook endpoint has been initialized. Magellanic will attempt
-   * to send an HTTP request during authentication and the application must be already able to respond correctly to
-   * complete the authentication process.</b>
-   *
-   * Does not throw errors, so it's safe to use in event listener function.
-   *
+   * @throws {@link AuthenticateError}
    */
-  async authenticate(): Promise<{ authenticated: boolean; reason?: any }> {
+  async authenticate(): Promise<void> {
     let token;
     if (this.provider === 'k8s') {
+      const tokenPath = '/var/run/secrets/kubernetes.io/serviceaccount/token';
       try {
-        token = readFileSync(
-          '/var/run/secrets/kubernetes.io/serviceaccount/token',
-          { encoding: 'utf8' },
-        );
+        token = readFileSync(tokenPath, { encoding: 'utf8' });
       } catch (err) {
-        return {
-          authenticated: false,
-          reason: err,
-        };
+        if (err instanceof Error) {
+          throw new AuthenticateError(
+            `Error when trying to read the token file (path: ${tokenPath}): \n${err.message}`,
+          );
+        } else {
+          throw err;
+        }
       }
     }
     try {
@@ -121,20 +151,13 @@ export class MagellanicClient {
       }
       await this.instantiateWasm();
       await this.pullTokens();
-      return {
-        authenticated: true,
-      };
     } catch (err) {
       if (isAxiosError(err)) {
-        return {
-          authenticated: false,
-          reason: { message: err.message, response: err.response?.data },
-        };
+        throw new AuthenticateError(err.message, err.response?.data);
+      } else if (err instanceof Error) {
+        throw new AuthenticateError(err.message);
       } else {
-        return {
-          authenticated: false,
-          reason: err,
-        };
+        throw err;
       }
     }
   }
@@ -143,10 +166,11 @@ export class MagellanicClient {
    * Method used to obtain the latest workload's token.
    *
    * @returns the latest token of this workload
+   * @throws {@link NotInitializedError}
    */
   getMyToken() {
     if (!this.state) {
-      throw new Error('not initialized');
+      throw new NotInitializedError();
     }
     return this.state.tokens[this.tdtiId];
   }
@@ -161,10 +185,11 @@ export class MagellanicClient {
    * ```
    *
    * @returns headers object
+   * @throws {@link NotInitializedError}
    */
   generateHeaders(): Record<string, string> {
     if (!this.state) {
-      throw new Error('not initialized');
+      throw new NotInitializedError();
     }
     return {
       Authorization: `Bearer ${this.getMyToken()}`,
@@ -175,18 +200,21 @@ export class MagellanicClient {
   /**
    * Method used to validate request from another workload. It throws errors on bad requests and returns nothing if
    * everything is as expected.
-   * If you don't want to pass Express.js Request object, see {@link validateToken} method.
+   * If you don't want to pass Express.js Request object, see {@link validateToken} method instead.
    *
    * @param req Express.js Request object
+   * @throws {@link RequestValidationError}
+   * @throws {@link NotInitializedError}
+   * @throws {@link TokenValidationError}
    */
   validateRequest(req: Request) {
     const tdtiId = req.header(TDTI_ID_HEADER_NAME);
     if (!tdtiId) {
-      throw new Error('tdtiId header not defined');
+      throw new RequestValidationError('tdtiId header not defined');
     }
     const tokenHeader = req.header('Authorization');
     if (!tokenHeader) {
-      throw new Error('Authorization header not defined');
+      throw new RequestValidationError('Authorization header not defined');
     }
     const token = tokenHeader.split(' ')[1];
     return this.validateToken(tdtiId, token);
@@ -200,54 +228,84 @@ export class MagellanicClient {
    *
    * @param tdtiId unique sender's TDTI ID (acquired from the "magellanic-tdti-id" header)
    * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
+   * @throws {@link TokenValidationError}
+   * @throws {@link NotInitializedError}
    */
   async validateToken(tdtiId: string, token: string) {
     if (!this.state) {
-      throw new Error('not initialized');
+      throw new NotInitializedError();
     }
     if (this.state.tokens[tdtiId] !== token) {
       if (this.prevState?.tokens[tdtiId] !== token) {
         await this.pullTokens();
         if (this.state.tokens[tdtiId] !== token) {
           if (this.prevState?.tokens[tdtiId] !== token) {
-            throw new Error('bad token');
+            throw new TokenValidationError('bad token');
           }
         }
       }
     }
   }
 
-  async kyberGenerateKeys() {
+  /**
+   * Method used to generate Kyber private key/public key pair.
+   *
+   * @throws {@link WasmError}
+   */
+  async kyberGenerateKeys(): Promise<KyberGenerateKeysResponse> {
     await this.instantiateWasm();
     const kyberGenerateKeysResponse = this.cryptoService!.kyberGenerateKeys();
     if ('error' in kyberGenerateKeysResponse) {
-      throw new Error(kyberGenerateKeysResponse.error);
+      throw new WasmError(kyberGenerateKeysResponse.error);
     }
     return kyberGenerateKeysResponse;
   }
 
-  async kyberEncrypt(publicKey: string) {
+  /**
+   * Method used to generate Kyber secret and ciphertext
+   *
+   * @param publicKey Kyber public key generated using {@link kyberGenerateKeys}
+   * @throws {@link WasmError}
+   */
+  async kyberEncrypt(publicKey: string): Promise<KyberEncryptResponse> {
     await this.instantiateWasm();
     const kyberEncryptResponse = this.cryptoService!.kyberEncrypt(publicKey);
     if ('error' in kyberEncryptResponse) {
-      throw new Error(kyberEncryptResponse.error);
+      throw new WasmError(kyberEncryptResponse.error);
     }
     return kyberEncryptResponse;
   }
 
-  async kyberDecrypt(privateKey: string, ciphertext: string) {
+  /**
+   * Method used to decrypt a secret using ciphertext
+   *
+   * @param privateKey Kyber public key generated using {@link kyberGenerateKeys}
+   * @param ciphertext Kyber ciphertext generated using {@link kyberEncrypt}
+   * @throws {@link WasmError}
+   */
+  async kyberDecrypt(
+    privateKey: string,
+    ciphertext: string,
+  ): Promise<KyberDecryptResponse> {
     await this.instantiateWasm();
     const kyberDecryptResponse = this.cryptoService!.kyberDecrypt(
       privateKey,
       ciphertext,
     );
     if ('error' in kyberDecryptResponse) {
-      throw new Error(kyberDecryptResponse.error);
+      throw new WasmError(kyberDecryptResponse.error);
     }
     return kyberDecryptResponse;
   }
 
-  async dilithiumGenerateKeys(mode: DilithiumMode) {
+  /**
+   * Method used to generate Dilithium private key/public key pair.
+   * @param mode Dilithium mode - 2 or 3
+   * @throws {@link WasmError}
+   */
+  async dilithiumGenerateKeys(
+    mode: DilithiumMode,
+  ): Promise<DilithiumGenerateKeysResponse> {
     await this.instantiateWasm();
     const dilithiumGenerateKeysResponse =
       this.cryptoService!.dilithiumGenerateKeys(mode);
@@ -257,11 +315,18 @@ export class MagellanicClient {
     return dilithiumGenerateKeysResponse;
   }
 
+  /**
+   * Method used to generate a signature of provided message using Dilithium.
+   * @param mode Dilithium mode - 2 or 3
+   * @param privateKey Dilithium private key generated using {@link dilithiumGenerateKeys}
+   * @param message message you want to sign
+   * @throws {@link WasmError}
+   */
   async dilithiumSign(
     mode: DilithiumMode,
     privateKey: string,
     message: string,
-  ) {
+  ): Promise<DilithiumSignResponse> {
     await this.instantiateWasm();
     const dilithiumSignResponse = this.cryptoService!.dilithiumSign(
       mode,
@@ -274,12 +339,20 @@ export class MagellanicClient {
     return dilithiumSignResponse;
   }
 
+  /**
+   * Method used to verify a signature of provided message using Dilithium.
+   * @param mode Dilithium mode - 2 or 3. Use the same as when signing.
+   * @param publicKey Dilithium public key generated using {@link dilithiumGenerateKeys}
+   * @param message message received
+   * @param signature signature received
+   * @throws {@link WasmError}
+   */
   async dilithiumVerify(
     mode: DilithiumMode,
     publicKey: string,
     message: string,
     signature: string,
-  ) {
+  ): Promise<DilithiumVerifyResponse> {
     await this.instantiateWasm();
     const dilithiumVerifyResponse = this.cryptoService!.dilithiumVerify(
       mode,
@@ -294,7 +367,7 @@ export class MagellanicClient {
   }
 
   // TODO: handle errors
-  private async pullTokens() {
+  private async pullTokens(): Promise<void> {
     clearTimeout(this.nextPullTimeoutId);
     const payload = await this.createIdentityPayload();
     const response = await this.axiosInstance.post('pull-tokens', payload);
