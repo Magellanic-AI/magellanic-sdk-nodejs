@@ -22,47 +22,42 @@ npm install -save .../magellanic-sdk
 
 An example Node.js Express application that utilizes all Magellanic SDK for Node.js features can be found at ...
 
+#### Configuration
+
+Magellanic SDK can be configured either by providing configuration object during MagellanicClient initialization or using environment variables.
+
+| Environment variable         | Config parameter | Required | Description                                                                                                         |
+|------------------------------|------------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| MAGELLANIC_PROJECT_KEY       | projectKey       | yes      | Magellanic project key that is available in Magellanic web app                                                      |
+| MAGELLANIC_WORKLOAD_NAME     | provider         | no       | Optional workload name that will be shown in Magellanic web app (random uuid will be used otherwise)                |
+| MAGELLANIC_WORKLOAD_PROVIDER | name             | no       | Optional provider type. Magellanic SDK will resolve it on its own, but providing it will make initialization faster |
+
+
 #### Simple Setup
 
-Create the MagellanicClient instance:
+Create the MagellanicClient instance and authenticate:
 
 ```ts
 import { MagellanicClient } from 'magellanic-sdk';
 
 // Setup client
-export const client = new MagellanicClient('mgl://example/TDTI/ID');
-```
-
-Setup endpoint that responds to webhook events sent by Magellanic:
-
-```ts
-import { NextFunction, Request } from 'express';
-import { magellanicClient } from 'path/of/your/setup/file';
-
-app.get('/magellanic-webhook', async (req: Request, res: Response) => {
-  const response = await magellanicClient.handleWebhook(req.body);
-  res.status(200).send(response);
+const client = new MagellanicClient({
+  projectKey: 'mgl://3/2b8d8155-7530-49b0-ac4d-1a92cfc4c7ba',
+  provider: 'k8s',
+  name: 'My app',
 });
+await client.authenticate();
 ```
 
-Authenticate client:
-
-> **_Important:_** _authenticate()_ method should be called after the application has been initialized - the webhook endpoint must be accessible by Magellanic.
+or
 
 ```ts
-import express from 'express';
-import { magellanicClient } from 'path/of/your/setup/file';
+import { MagellanicClient } from 'magellanic-sdk';
 
-const app = express();
-const server = app.listen(3000);
-
-server.on('listening', async () => {
-  console.log(`🚀 App listening on the port 3000`);
-  const result = await magellanicClient.authenticate();
-  if (!result.authenticated) {
-    console.log(result.reason);
-    server.close();
-  }
+const client = await MagellanicClient.createClient({
+  projectKey: 'mgl://3/2b8d8155-7530-49b0-ac4d-1a92cfc4c7ba',
+  provider: 'k8s',
+  name: 'My app',
 });
 ```
 
