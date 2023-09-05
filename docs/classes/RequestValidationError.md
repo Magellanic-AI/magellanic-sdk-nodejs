@@ -44,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-src/client/errors/request-validation.error.ts:2
+[src/client/errors/request-validation.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/client/errors/request-validation.error.ts#L2)
 
 ## Properties
 

@@ -17,7 +17,7 @@
 
 #### Defined in
 
-src/crypto/types/interfaces/dilithium-generate-keys-response.interface.ts:3
+[src/crypto/types/interfaces/dilithium-generate-keys-response.interface.ts:3](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/crypto/types/interfaces/dilithium-generate-keys-response.interface.ts#L3)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-src/crypto/types/interfaces/dilithium-generate-keys-response.interface.ts:2
+[src/crypto/types/interfaces/dilithium-generate-keys-response.interface.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/crypto/types/interfaces/dilithium-generate-keys-response.interface.ts#L2)

@@ -18,7 +18,6 @@
 
 - [ClientOptions](interfaces/ClientOptions.md)
 - [DilithiumGenerateKeysResponse](interfaces/DilithiumGenerateKeysResponse.md)
-- [DilithiumMode](interfaces/DilithiumMode.md)
 - [DilithiumSignResponse](interfaces/DilithiumSignResponse.md)
 - [DilithiumVerifyResponse](interfaces/DilithiumVerifyResponse.md)
 - [KyberDecryptResponse](interfaces/KyberDecryptResponse.md)
@@ -27,9 +26,20 @@
 
 ### Type Aliases
 
+- [DilithiumMode](modules.md#dilithiummode)
 - [TWasmError](modules.md#twasmerror)
 
 ## Type Aliases
+
+### DilithiumMode
+
+Ƭ **DilithiumMode**: ``2`` \| ``3``
+
+#### Defined in
+
+[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/crypto/types/dilithium-mode.type.ts#L1)
+
+___
 
 ### TWasmError
 
@@ -43,4 +53,4 @@
 
 #### Defined in
 
-src/crypto/types/wasm-error.type.ts:1
+[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/crypto/types/wasm-error.type.ts#L1)
