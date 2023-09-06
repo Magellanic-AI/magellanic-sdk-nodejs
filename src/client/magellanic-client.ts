@@ -40,7 +40,6 @@ export class MagellanicClient {
   private readonly tdtiId: string;
   private readonly name: string;
   private readonly provider: Provider;
-  private readonly projectKey: string;
 
   private state?: State;
   private prevState?: State;
@@ -107,7 +106,6 @@ export class MagellanicClient {
     this.tdtiId = `${projectKey}/${id}`;
     this.name = name;
     this.provider = <Provider>provider;
-    this.projectKey = projectKey;
     this.axiosInstance = axios.create({
       baseURL: API_URL,
       headers: {
@@ -139,7 +137,6 @@ export class MagellanicClient {
     }
     try {
       const payload: AuthPayload = {
-        projectKey: this.projectKey,
         providerType: this.provider,
         name: this.name,
         token,
