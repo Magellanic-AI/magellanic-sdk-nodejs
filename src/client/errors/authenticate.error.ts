@@ -1,5 +1,7 @@
 export class AuthenticateError extends Error {
-  constructor(message: string, response?: string) {
-    super(`${message}${response ? `\nResponse: ${response}` : ''}`);
+  constructor(message: string, response?: Record<string, unknown>) {
+    super(
+      `${message}${response ? `\nResponse: ${JSON.stringify(response)}` : ''}`,
+    );
   }
 }
