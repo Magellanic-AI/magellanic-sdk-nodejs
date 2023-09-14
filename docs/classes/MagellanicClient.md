@@ -45,7 +45,7 @@ The constructor of the "MagellanicClient" class.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:76](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L76)
+[src/client/magellanic-client.ts:77](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L77)
 
 ## Methods
 
@@ -65,7 +65,7 @@ Method used to authenticate the workload.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:117](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L117)
+[src/client/magellanic-client.ts:119](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L119)
 
 ___
 
@@ -91,7 +91,7 @@ Method used to generate Dilithium private key/public key pair.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:294](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L294)
+[src/client/magellanic-client.ts:297](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L297)
 
 ___
 
@@ -119,7 +119,7 @@ Method used to generate a signature of provided message using Dilithium.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:313](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L313)
+[src/client/magellanic-client.ts:316](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L316)
 
 ___
 
@@ -148,7 +148,7 @@ Method used to verify a signature of provided message using Dilithium.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:338](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L338)
+[src/client/magellanic-client.ts:341](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L341)
 
 ___
 
@@ -176,7 +176,7 @@ headers object
 
 #### Defined in
 
-[src/client/magellanic-client.ts:182](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L182)
+[src/client/magellanic-client.ts:185](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L185)
 
 ___
 
@@ -198,7 +198,7 @@ the latest token of this workload
 
 #### Defined in
 
-[src/client/magellanic-client.ts:165](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L165)
+[src/client/magellanic-client.ts:168](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L168)
 
 ___
 
@@ -225,7 +225,7 @@ Method used to decrypt a secret using ciphertext
 
 #### Defined in
 
-[src/client/magellanic-client.ts:274](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L274)
+[src/client/magellanic-client.ts:277](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L277)
 
 ___
 
@@ -251,7 +251,7 @@ Method used to generate Kyber secret and ciphertext
 
 #### Defined in
 
-[src/client/magellanic-client.ts:258](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L258)
+[src/client/magellanic-client.ts:261](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L261)
 
 ___
 
@@ -271,7 +271,7 @@ Method used to generate Kyber private key/public key pair.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:243](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L243)
+[src/client/magellanic-client.ts:246](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L246)
 
 ___
 
@@ -307,7 +307,7 @@ If you don't want to pass Express.js Request object, see [validateToken](Magella
 
 #### Defined in
 
-[src/client/magellanic-client.ts:200](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L200)
+[src/client/magellanic-client.ts:203](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L203)
 
 ___
 
@@ -341,7 +341,7 @@ See [validateRequest](MagellanicClient.md#validaterequest) method if using Expre
 
 #### Defined in
 
-[src/client/magellanic-client.ts:224](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L224)
+[src/client/magellanic-client.ts:227](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L227)
 
 ___
 
@@ -377,4 +377,4 @@ authenticated [MagellanicClient](MagellanicClient.md) instance
 
 #### Defined in
 
-[src/client/magellanic-client.ts:62](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/client/magellanic-client.ts#L62)
+[src/client/magellanic-client.ts:63](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L63)

@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[src/crypto/types/interfaces/dilithium-verify-response.interface.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/crypto/types/interfaces/dilithium-verify-response.interface.ts#L2)
+[src/crypto/types/interfaces/dilithium-verify-response.interface.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/crypto/types/interfaces/dilithium-verify-response.interface.ts#L2)
