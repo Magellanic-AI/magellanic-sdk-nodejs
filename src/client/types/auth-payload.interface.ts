@@ -10,4 +10,5 @@ export interface AuthPayload {
   name?: string;
   token?: string;
   reauthData?: ReauthData;
+  projectKey: string;
 }

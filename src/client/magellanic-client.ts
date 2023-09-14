@@ -39,6 +39,7 @@ export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
   private readonly name: string;
   private readonly provider: Provider;
+  private readonly projectKey: string;
 
   private state?: State;
   private prevState?: State;
@@ -102,6 +103,7 @@ export class MagellanicClient {
         name = id;
       }
     }
+    this.projectKey = projectKey;
     this.name = name;
     this.provider = <Provider>provider;
     this.axiosInstance = axios.create({
@@ -135,6 +137,7 @@ export class MagellanicClient {
         providerType: this.provider,
         name: this.name,
         token,
+        projectKey: this.projectKey,
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);
