@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/crypto/types/dilithium-mode.type.ts#L1)
+[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/crypto/types/dilithium-mode.type.ts#L1)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0b7d1b6/src/crypto/types/wasm-error.type.ts#L1)
+[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/70cfedb/src/crypto/types/wasm-error.type.ts#L1)

@@ -6,7 +6,7 @@ import { readFileSync } from 'fs';
 import Go from '../crypto/wasm-exec.helper';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
-import { DilithiumData } from './types/dilithium-data.interface';
+import { AuthData } from './types/dilithium-data.interface';
 import { AuthPayload } from './types/auth-payload.interface';
 import { Provider } from './types/provider.type';
 import { State } from './types/state.interface';
@@ -30,14 +30,13 @@ import {
 } from '../crypto';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
-const TDTI_ID_HEADER_NAME = 'magellanic-tdti-id';
+const ID_HEADER_NAME = 'magellanic-workload-id';
 
 /**
  * Magellanic SDK Client base class
  */
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
-  private readonly tdtiId: string;
   private readonly name: string;
   private readonly provider: Provider;
 
@@ -45,7 +44,7 @@ export class MagellanicClient {
   private prevState?: State;
 
   private cryptoService?: CryptoService;
-  private dilithiumData?: DilithiumData;
+  private authData?: AuthData;
   private nextPullTimeoutId?: number;
 
   /**
@@ -103,14 +102,10 @@ export class MagellanicClient {
         name = id;
       }
     }
-    this.tdtiId = `${projectKey}/${id}`;
     this.name = name;
     this.provider = <Provider>provider;
     this.axiosInstance = axios.create({
       baseURL: API_URL,
-      headers: {
-        [TDTI_ID_HEADER_NAME]: this.tdtiId,
-      },
     });
   }
 
@@ -143,9 +138,11 @@ export class MagellanicClient {
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);
-      if (!this.dilithiumData) {
-        this.dilithiumData = response.data;
-      }
+      this.authData = response.data;
+      this.axiosInstance.interceptors.request.use((config) => {
+        config.headers[ID_HEADER_NAME] = this.authData?.id;
+        return config;
+      });
       await this.instantiateWasm();
       await this.pullTokens();
     } catch (err) {
@@ -166,10 +163,8 @@ export class MagellanicClient {
    * @throws {@link NotInitializedError}
    */
   getMyToken() {
-    if (!this.state) {
-      throw new NotInitializedError();
-    }
-    return this.state.tokens[this.tdtiId];
+    this.checkState();
+    return this.state!.tokens[this.authData!.id];
   }
 
   /**
@@ -185,12 +180,10 @@ export class MagellanicClient {
    * @throws {@link NotInitializedError}
    */
   generateHeaders(): Record<string, string> {
-    if (!this.state) {
-      throw new NotInitializedError();
-    }
+    this.checkState();
     return {
       Authorization: `Bearer ${this.getMyToken()}`,
-      [TDTI_ID_HEADER_NAME]: this.tdtiId,
+      [ID_HEADER_NAME]: this.authData!.id,
     };
   }
 
@@ -205,16 +198,16 @@ export class MagellanicClient {
    * @throws {@link TokenValidationError}
    */
   validateRequest(req: Request) {
-    const tdtiId = req.header(TDTI_ID_HEADER_NAME);
-    if (!tdtiId) {
-      throw new RequestValidationError('tdtiId header not defined');
+    const id = req.header(ID_HEADER_NAME);
+    if (!id) {
+      throw new RequestValidationError('workload id header not defined');
     }
     const tokenHeader = req.header('Authorization');
     if (!tokenHeader) {
       throw new RequestValidationError('Authorization header not defined');
     }
     const token = tokenHeader.split(' ')[1];
-    return this.validateToken(tdtiId, token);
+    return this.validateToken(id, token);
   }
 
   /**
@@ -223,20 +216,18 @@ export class MagellanicClient {
    *
    * See {@link validateRequest} method if using Express.js
    *
-   * @param tdtiId unique sender's TDTI ID (acquired from the "magellanic-tdti-id" header)
+   * @param workloadId unique sender's ID (acquired from the "magellanic-workload-id" header)
    * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
    * @throws {@link TokenValidationError}
    * @throws {@link NotInitializedError}
    */
-  async validateToken(tdtiId: string, token: string) {
-    if (!this.state) {
-      throw new NotInitializedError();
-    }
-    if (this.state.tokens[tdtiId] !== token) {
-      if (this.prevState?.tokens[tdtiId] !== token) {
+  async validateToken(workloadId: string, token: string) {
+    this.checkState();
+    if (this.state!.tokens[workloadId] !== token) {
+      if (this.prevState?.tokens[workloadId] !== token) {
         await this.pullTokens();
-        if (this.state.tokens[tdtiId] !== token) {
-          if (this.prevState?.tokens[tdtiId] !== token) {
+        if (this.state!.tokens[workloadId] !== token) {
+          if (this.prevState?.tokens[workloadId] !== token) {
             throw new TokenValidationError('bad token');
           }
         }
@@ -380,8 +371,8 @@ export class MagellanicClient {
   private async createIdentityPayload() {
     const message = new Date().toISOString();
     const response = this.cryptoService!.dilithiumSign(
-      this.dilithiumData!.mode,
-      this.dilithiumData!.privateKey,
+      this.authData!.mode,
+      this.authData!.privateKey,
       message,
     );
     if ('error' in response) {
@@ -423,6 +414,12 @@ export class MagellanicClient {
         kyberEncrypt: mglKyberEncrypt,
         kyberDecrypt: mglKyberDecrypt,
       };
+    }
+  }
+
+  private checkState() {
+    if (!this.state || !this.authData) {
+      throw new NotInitializedError();
     }
   }
 }
