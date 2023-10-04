@@ -2,16 +2,18 @@
 
 The purpose of the Magellanic SDK for Node.js is to provide a quick and easy way to integrate any Node.js project with the Magellanic platform. Currently, it supports only Express.js, but there are plans to integrate with other popular frameworks, such as Fastify.
 
+## Magellanic Documentation
+
+Learn more [here](https://docs.magellanic.ai).
+
 ## Installation
 
 The easiest way to get the latest version of Magellanic SDK for Node.js is to use yarn or npm:
 
-[//]: # 'TODO: replace with proper npm package name'
-
 ```bash
-yarn install .../magellanic-sdk
+yarn add @magellanic/magellanic-sdk
 or
-npm install -save .../magellanic-sdk
+npm install @magellanic/magellanic-sdk
 ```
 
 ## Usage
@@ -113,4 +115,4 @@ app.get('/example-workload-endpoint', async (req: Request, res: Response) => {
 
 ## License
 
-[//]: # 'TODO'
+Apache License 2.0
