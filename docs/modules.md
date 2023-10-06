@@ -1,6 +1,6 @@
-[magellanic-sdk](README.md) / Exports
+[@magellanic/magellanic-sdk](README.md) / Exports
 
-# magellanic-sdk
+# @magellanic/magellanic-sdk
 
 ## Table of contents
 
@@ -37,7 +37,7 @@
 
 #### Defined in
 
-[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/crypto/types/dilithium-mode.type.ts#L1)
+[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/crypto/types/dilithium-mode.type.ts#L1)
 
 ___
 
@@ -53,4 +53,4 @@ ___
 
 #### Defined in
 
-[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/crypto/types/wasm-error.type.ts#L1)
+[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/crypto/types/wasm-error.type.ts#L1)

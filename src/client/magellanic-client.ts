@@ -38,8 +38,9 @@ const ID_HEADER_NAME = 'magellanic-workload-id';
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
   private readonly name: string;
-  private readonly provider: Provider;
   private readonly projectKey: string;
+  private readonly provider?: Provider;
+  private readonly apiKey?: string;
 
   private state?: State;
   private prevState?: State;
@@ -88,9 +89,8 @@ export class MagellanicClient {
       }
     }
     if (!provider) {
-      provider = 'k8s';
       // TODO: support other providers
-      // provider = process.env.MAGELLANIC_PROVIDER_TYPE;
+      provider = process.env.MAGELLANIC_PROVIDER_TYPE;
       // TODO: detect provider properly
       // if (!provider) {
       //   provider = 'k8s';
@@ -103,6 +103,7 @@ export class MagellanicClient {
         name = id;
       }
     }
+    this.apiKey = clientOptions?.apiKey || process.env.MAGELLANIC_API_KEY;
     this.projectKey = projectKey;
     this.name = name;
     this.provider = <Provider>provider;
@@ -138,6 +139,7 @@ export class MagellanicClient {
         name: this.name,
         token,
         projectKey: this.projectKey,
+        apiKey: this.apiKey,
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);

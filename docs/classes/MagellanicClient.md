@@ -1,4 +1,4 @@
-[magellanic-sdk](../README.md) / [Exports](../modules.md) / MagellanicClient
+[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / MagellanicClient
 
 # Class: MagellanicClient
 
@@ -33,19 +33,19 @@ Magellanic SDK Client base class
 
 The constructor of the "MagellanicClient" class.
 
-**`Throws`**
-
-[ProjectKeyMissingError](ProjectKeyMissingError.md) if projectKey is missing
-
 #### Parameters
 
 | Name | Type |
 | :------ | :------ |
 | `clientOptions?` | [`ClientOptions`](../interfaces/ClientOptions.md) |
 
+**`Throws`**
+
+[ProjectKeyMissingError](ProjectKeyMissingError.md) if projectKey is missing
+
 #### Defined in
 
-[src/client/magellanic-client.ts:77](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L77)
+[src/client/magellanic-client.ts:78](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L78)
 
 ## Methods
 
@@ -55,17 +55,17 @@ The constructor of the "MagellanicClient" class.
 
 Method used to authenticate the workload.
 
-**`Throws`**
-
-[AuthenticateError](AuthenticateError.md)
-
 #### Returns
 
 `Promise`<`void`\>
 
+**`Throws`**
+
+[AuthenticateError](AuthenticateError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:119](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L119)
+[src/client/magellanic-client.ts:120](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L120)
 
 ___
 
@@ -74,10 +74,6 @@ ___
 ▸ **dilithiumGenerateKeys**(`mode`): `Promise`<[`DilithiumGenerateKeysResponse`](../interfaces/DilithiumGenerateKeysResponse.md)\>
 
 Method used to generate Dilithium private key/public key pair.
-
-**`Throws`**
-
-[WasmError](WasmError.md)
 
 #### Parameters
 
@@ -89,9 +85,13 @@ Method used to generate Dilithium private key/public key pair.
 
 `Promise`<[`DilithiumGenerateKeysResponse`](../interfaces/DilithiumGenerateKeysResponse.md)\>
 
+**`Throws`**
+
+[WasmError](WasmError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:297](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L297)
+[src/client/magellanic-client.ts:299](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L299)
 
 ___
 
@@ -100,10 +100,6 @@ ___
 ▸ **dilithiumSign**(`mode`, `privateKey`, `message`): `Promise`<[`DilithiumSignResponse`](../interfaces/DilithiumSignResponse.md)\>
 
 Method used to generate a signature of provided message using Dilithium.
-
-**`Throws`**
-
-[WasmError](WasmError.md)
 
 #### Parameters
 
@@ -117,9 +113,13 @@ Method used to generate a signature of provided message using Dilithium.
 
 `Promise`<[`DilithiumSignResponse`](../interfaces/DilithiumSignResponse.md)\>
 
+**`Throws`**
+
+[WasmError](WasmError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:316](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L316)
+[src/client/magellanic-client.ts:318](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L318)
 
 ___
 
@@ -128,10 +128,6 @@ ___
 ▸ **dilithiumVerify**(`mode`, `publicKey`, `message`, `signature`): `Promise`<[`DilithiumVerifyResponse`](../interfaces/DilithiumVerifyResponse.md)\>
 
 Method used to verify a signature of provided message using Dilithium.
-
-**`Throws`**
-
-[WasmError](WasmError.md)
 
 #### Parameters
 
@@ -146,9 +142,13 @@ Method used to verify a signature of provided message using Dilithium.
 
 `Promise`<[`DilithiumVerifyResponse`](../interfaces/DilithiumVerifyResponse.md)\>
 
+**`Throws`**
+
+[WasmError](WasmError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:341](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L341)
+[src/client/magellanic-client.ts:343](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L343)
 
 ___
 
@@ -164,19 +164,19 @@ await axios.post('.../external-app/example', payload, {
 });
 ```
 
-**`Throws`**
-
-[NotInitializedError](NotInitializedError.md)
-
 #### Returns
 
 `Record`<`string`, `string`\>
 
 headers object
 
+**`Throws`**
+
+[NotInitializedError](NotInitializedError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:185](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L185)
+[src/client/magellanic-client.ts:187](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L187)
 
 ___
 
@@ -186,19 +186,19 @@ ___
 
 Method used to obtain the latest workload's token.
 
-**`Throws`**
-
-[NotInitializedError](NotInitializedError.md)
-
 #### Returns
 
 `string`
 
 the latest token of this workload
 
+**`Throws`**
+
+[NotInitializedError](NotInitializedError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:168](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L168)
+[src/client/magellanic-client.ts:170](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L170)
 
 ___
 
@@ -207,10 +207,6 @@ ___
 ▸ **kyberDecrypt**(`privateKey`, `ciphertext`): `Promise`<[`KyberDecryptResponse`](../interfaces/KyberDecryptResponse.md)\>
 
 Method used to decrypt a secret using ciphertext
-
-**`Throws`**
-
-[WasmError](WasmError.md)
 
 #### Parameters
 
@@ -223,9 +219,13 @@ Method used to decrypt a secret using ciphertext
 
 `Promise`<[`KyberDecryptResponse`](../interfaces/KyberDecryptResponse.md)\>
 
+**`Throws`**
+
+[WasmError](WasmError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:277](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L277)
+[src/client/magellanic-client.ts:279](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L279)
 
 ___
 
@@ -234,10 +234,6 @@ ___
 ▸ **kyberEncrypt**(`publicKey`): `Promise`<[`KyberEncryptResponse`](../interfaces/KyberEncryptResponse.md)\>
 
 Method used to generate Kyber secret and ciphertext
-
-**`Throws`**
-
-[WasmError](WasmError.md)
 
 #### Parameters
 
@@ -249,9 +245,13 @@ Method used to generate Kyber secret and ciphertext
 
 `Promise`<[`KyberEncryptResponse`](../interfaces/KyberEncryptResponse.md)\>
 
+**`Throws`**
+
+[WasmError](WasmError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:261](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L261)
+[src/client/magellanic-client.ts:263](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L263)
 
 ___
 
@@ -261,17 +261,17 @@ ___
 
 Method used to generate Kyber private key/public key pair.
 
-**`Throws`**
-
-[WasmError](WasmError.md)
-
 #### Returns
 
 `Promise`<[`KyberGenerateKeysResponse`](../interfaces/KyberGenerateKeysResponse.md)\>
 
+**`Throws`**
+
+[WasmError](WasmError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:246](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L246)
+[src/client/magellanic-client.ts:248](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L248)
 
 ___
 
@@ -282,6 +282,16 @@ ___
 Method used to validate request from another workload. It throws errors on bad requests and returns nothing if
 everything is as expected.
 If you don't want to pass Express.js Request object, see [validateToken](MagellanicClient.md#validatetoken) method instead.
+
+#### Parameters
+
+| Name | Type | Description |
+| :------ | :------ | :------ |
+| `req` | `Request`<`ParamsDictionary`, `any`, `any`, `ParsedQs`, `Record`<`string`, `any`\>\> | Express.js Request object |
+
+#### Returns
+
+`Promise`<`void`\>
 
 **`Throws`**
 
@@ -295,19 +305,9 @@ If you don't want to pass Express.js Request object, see [validateToken](Magella
 
 [TokenValidationError](TokenValidationError.md)
 
-#### Parameters
-
-| Name | Type | Description |
-| :------ | :------ | :------ |
-| `req` | `Request`<`ParamsDictionary`, `any`, `any`, `ParsedQs`, `Record`<`string`, `any`\>\> | Express.js Request object |
-
-#### Returns
-
-`Promise`<`void`\>
-
 #### Defined in
 
-[src/client/magellanic-client.ts:203](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L203)
+[src/client/magellanic-client.ts:205](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L205)
 
 ___
 
@@ -320,14 +320,6 @@ everything is as expected.
 
 See [validateRequest](MagellanicClient.md#validaterequest) method if using Express.js
 
-**`Throws`**
-
-[TokenValidationError](TokenValidationError.md)
-
-**`Throws`**
-
-[NotInitializedError](NotInitializedError.md)
-
 #### Parameters
 
 | Name | Type | Description |
@@ -339,9 +331,17 @@ See [validateRequest](MagellanicClient.md#validaterequest) method if using Expre
 
 `Promise`<`void`\>
 
+**`Throws`**
+
+[TokenValidationError](TokenValidationError.md)
+
+**`Throws`**
+
+[NotInitializedError](NotInitializedError.md)
+
 #### Defined in
 
-[src/client/magellanic-client.ts:227](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L227)
+[src/client/magellanic-client.ts:229](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L229)
 
 ___
 
@@ -355,14 +355,6 @@ const magellanicClient = new MagellanicClient(clientOptions);
 await magellanicClient.authenticate();
 ```
 
-**`Throws`**
-
-[AuthenticateError](AuthenticateError.md)
-
-**`Throws`**
-
-[ProjectKeyMissingError](ProjectKeyMissingError.md) if projectKey is missing
-
 #### Parameters
 
 | Name | Type |
@@ -375,6 +367,14 @@ await magellanicClient.authenticate();
 
 authenticated [MagellanicClient](MagellanicClient.md) instance
 
+**`Throws`**
+
+[AuthenticateError](AuthenticateError.md)
+
+**`Throws`**
+
+[ProjectKeyMissingError](ProjectKeyMissingError.md) if projectKey is missing
+
 #### Defined in
 
-[src/client/magellanic-client.ts:63](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/magellanic-client.ts#L63)
+[src/client/magellanic-client.ts:64](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/magellanic-client.ts#L64)

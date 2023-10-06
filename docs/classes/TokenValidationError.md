@@ -1,4 +1,4 @@
-[magellanic-sdk](../README.md) / [Exports](../modules.md) / TokenValidationError
+[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / TokenValidationError
 
 # Class: TokenValidationError
 
@@ -44,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/token-validation.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/client/errors/token-validation.error.ts#L2)
+[src/client/errors/token-validation.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/errors/token-validation.error.ts#L2)
 
 ## Properties
 
@@ -100,10 +100,6 @@ ___
 
 Optional override for formatting stack traces
 
-**`See`**
-
-https://v8.dev/docs/stack-trace-api#customizing-stack-traces
-
 ##### Parameters
 
 | Name | Type |
@@ -114,6 +110,10 @@ https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 ##### Returns
 
 `any`
+
+**`See`**
+
+https://v8.dev/docs/stack-trace-api#customizing-stack-traces
 
 #### Inherited from
 

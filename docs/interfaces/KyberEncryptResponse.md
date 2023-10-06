@@ -1,4 +1,4 @@
-[magellanic-sdk](../README.md) / [Exports](../modules.md) / KyberEncryptResponse
+[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / KyberEncryptResponse
 
 # Interface: KyberEncryptResponse
 
@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[src/crypto/types/interfaces/kyber-encrypt-response.interface.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/crypto/types/interfaces/kyber-encrypt-response.interface.ts#L2)
+[src/crypto/types/interfaces/kyber-encrypt-response.interface.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/crypto/types/interfaces/kyber-encrypt-response.interface.ts#L2)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[src/crypto/types/interfaces/kyber-encrypt-response.interface.ts:3](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0c28017/src/crypto/types/interfaces/kyber-encrypt-response.interface.ts#L3)
+[src/crypto/types/interfaces/kyber-encrypt-response.interface.ts:3](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/crypto/types/interfaces/kyber-encrypt-response.interface.ts#L3)

@@ -1,19 +1,21 @@
-magellanic-sdk / [Exports](modules.md)
+@magellanic/magellanic-sdk / [Exports](modules.md)
 
 # Magellanic SDK for Node.js
 
 The purpose of the Magellanic SDK for Node.js is to provide a quick and easy way to integrate any Node.js project with the Magellanic platform. Currently, it supports only Express.js, but there are plans to integrate with other popular frameworks, such as Fastify.
 
+## Magellanic Documentation
+
+Learn more [here](https://docs.magellanic.ai).
+
 ## Installation
 
 The easiest way to get the latest version of Magellanic SDK for Node.js is to use yarn or npm:
 
-[//]: # 'TODO: replace with proper npm package name'
-
 ```bash
-yarn install .../magellanic-sdk
+yarn add @magellanic/magellanic-sdk
 or
-npm install -save .../magellanic-sdk
+npm install @magellanic/magellanic-sdk
 ```
 
 ## Usage
@@ -28,11 +30,12 @@ An example Node.js Express application that utilizes all Magellanic SDK for Node
 
 Magellanic SDK can be configured either by providing configuration object during MagellanicClient initialization or using environment variables.
 
-| Environment variable         | Config parameter | Required | Description                                                                                                         |
-|------------------------------|------------------|----------|---------------------------------------------------------------------------------------------------------------------|
-| MAGELLANIC_PROJECT_KEY       | projectKey       | yes      | Magellanic project key that is available in Magellanic web app                                                      |
-| MAGELLANIC_WORKLOAD_NAME     | provider         | no       | Optional workload name that will be shown in Magellanic web app (random uuid will be used otherwise)                |
-| MAGELLANIC_WORKLOAD_PROVIDER | name             | no       | Optional provider type. Magellanic SDK will resolve it on its own, but providing it will make initialization faster |
+| Environment variable         | Config parameter | Required | Description                                                                                                                                               |
+|------------------------------|------------------|----------|-----------------------------------------------------------------------------------------------------------------------------------------------------------|
+| MAGELLANIC_PROJECT_KEY       | projectKey       | yes      | Magellanic project key that is available in Magellanic web app                                                                                            |
+| MAGELLANIC_WORKLOAD_NAME     | provider         | no       | Optional workload name that will be shown in Magellanic web app (random uuid will be used otherwise)                                                      |
+| MAGELLANIC_WORKLOAD_PROVIDER | name             | no       | Optional provider type. Not required when apiKey is provided. Magellanic SDK will resolve it on its own, but providing it will make initialization faster |
+| MAGELLANIC_API_KEY           | apiKey           | no       | Optional API key. Required when not authenticating using any cloud provider (e.g. for development purposes)                                               |
 
 #### Simple Setup
 
@@ -114,4 +117,4 @@ app.get('/example-workload-endpoint', async (req: Request, res: Response) => {
 
 ## License
 
-[//]: # 'TODO'
+Apache License 2.0

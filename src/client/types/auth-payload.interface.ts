@@ -6,7 +6,8 @@ interface ReauthData {
 }
 
 export interface AuthPayload {
-  providerType: Provider;
+  providerType?: Provider;
+  apiKey?: string;
   name?: string;
   token?: string;
   reauthData?: ReauthData;
