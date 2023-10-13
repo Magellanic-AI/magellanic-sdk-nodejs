@@ -44,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/token-validation.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/0210931/src/client/errors/token-validation.error.ts#L2)
+[src/client/errors/token-validation.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/client/errors/token-validation.error.ts#L2)
 
 ## Properties
 

@@ -2,6 +2,7 @@ import { DilithiumMode } from '../../crypto';
 
 export interface AuthData {
   id: string;
-  privateKey: string;
+  dilithiumPrivateKey: string;
   mode: DilithiumMode;
+  publicKey: string;
 }

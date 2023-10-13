@@ -9,7 +9,6 @@ import { resolve } from 'path';
 import { AuthData } from './types/dilithium-data.interface';
 import { AuthPayload } from './types/auth-payload.interface';
 import { Provider } from './types/provider.type';
-import { State } from './types/state.interface';
 import {
   ProjectKeyMissingError,
   AuthenticateError,
@@ -28,6 +27,7 @@ import {
   KyberGenerateKeysResponse,
   DilithiumMode,
 } from '../crypto';
+import { verify } from 'jsonwebtoken';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
 const ID_HEADER_NAME = 'magellanic-workload-id';
@@ -42,12 +42,10 @@ export class MagellanicClient {
   private readonly provider?: Provider;
   private readonly apiKey?: string;
 
-  private state?: State;
-  private prevState?: State;
+  private token?: string;
 
   private cryptoService?: CryptoService;
   private authData?: AuthData;
-  private nextPullTimeoutId?: number;
 
   /**
    * A shorthand for
@@ -118,11 +116,11 @@ export class MagellanicClient {
    * @throws {@link AuthenticateError}
    */
   async authenticate(): Promise<void> {
-    let token;
+    let k8sToken;
     if (this.provider === 'k8s') {
       const tokenPath = '/var/run/secrets/kubernetes.io/serviceaccount/token';
       try {
-        token = readFileSync(tokenPath, { encoding: 'utf8' });
+        k8sToken = readFileSync(tokenPath, { encoding: 'utf8' });
       } catch (err) {
         if (err instanceof Error) {
           throw new AuthenticateError(
@@ -137,19 +135,26 @@ export class MagellanicClient {
       const payload: AuthPayload = {
         providerType: this.provider,
         name: this.name,
-        token,
+        token: k8sToken,
         projectKey: this.projectKey,
         apiKey: this.apiKey,
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);
-      this.authData = response.data;
+      let tokenExpiryDate: string;
+      ({
+        authData: this.authData,
+        token: this.token,
+        tokenExpiryDate,
+      } = response.data);
       this.axiosInstance.interceptors.request.use((config) => {
         config.headers[ID_HEADER_NAME] = this.authData?.id;
         return config;
       });
       await this.instantiateWasm();
-      await this.pullTokens();
+      const timeout =
+        new Date(tokenExpiryDate).getTime() - new Date().getTime() - 30 * 1000;
+      setTimeout(() => this.rotateToken(), timeout);
     } catch (err) {
       if (isAxiosError(err)) {
         throw new AuthenticateError(err.message, err.response?.data);
@@ -167,9 +172,9 @@ export class MagellanicClient {
    * @returns the latest token of this workload
    * @throws {@link NotInitializedError}
    */
-  getMyToken() {
+  getMyToken(): string {
     this.checkState();
-    return this.state!.tokens[this.authData!.id];
+    return this.token as string;
   }
 
   /**
@@ -226,17 +231,21 @@ export class MagellanicClient {
    * @throws {@link TokenValidationError}
    * @throws {@link NotInitializedError}
    */
-  async validateToken(workloadId: string, token: string) {
+  validateToken(workloadId: string, token: string) {
     this.checkState();
-    if (this.state!.tokens[workloadId] !== token) {
-      if (this.prevState?.tokens[workloadId] !== token) {
-        await this.pullTokens();
-        if (this.state!.tokens[workloadId] !== token) {
-          if (this.prevState?.tokens[workloadId] !== token) {
-            throw new TokenValidationError('bad token');
-          }
-        }
+    try {
+      const payload = verify(token, this.authData!.publicKey, {
+        algorithms: ['RS256'],
+      });
+      if (
+        typeof payload === 'string' ||
+        !payload.workloadId ||
+        payload.workloadId !== workloadId
+      ) {
+        throw new Error();
       }
+    } catch {
+      throw new TokenValidationError('bad token');
     }
   }
 
@@ -360,24 +369,22 @@ export class MagellanicClient {
   }
 
   // TODO: handle errors
-  private async pullTokens(): Promise<void> {
-    clearTimeout(this.nextPullTimeoutId);
+  private async rotateToken(): Promise<void> {
     const payload = await this.createIdentityPayload();
     const response = await this.axiosInstance.post('pull-tokens', payload);
-    this.state = response.data.state;
-    if (response.data.prevState) {
-      this.prevState = response.data.prevState;
-    }
+    this.token = response.data.token;
     const timeout =
-      new Date(this.state!.nextRotation).getTime() - new Date().getTime();
-    setTimeout(() => this.pullTokens(), timeout > 0 ? timeout : 60 * 1000);
+      new Date(response.data.tokenExpiryDate).getTime() -
+      new Date().getTime() -
+      1000;
+    setTimeout(() => this.rotateToken(), timeout);
   }
 
   private async createIdentityPayload() {
     const message = new Date().toISOString();
     const response = this.cryptoService!.dilithiumSign(
       this.authData!.mode,
-      this.authData!.privateKey,
+      this.authData!.dilithiumPrivateKey,
       message,
     );
     if ('error' in response) {
@@ -423,7 +430,7 @@ export class MagellanicClient {
   }
 
   private checkState() {
-    if (!this.state || !this.authData) {
+    if (!this.token || !this.authData) {
       throw new NotInitializedError();
     }
   }
