@@ -381,18 +381,18 @@ export class MagellanicClient {
   }
 
   private async createIdentityPayload() {
-    const message = new Date().toISOString();
+    const token = this.token!;
     const response = this.cryptoService!.dilithiumSign(
       this.authData!.mode,
       this.authData!.dilithiumPrivateKey,
-      message,
+      token,
     );
     if ('error' in response) {
       throw new Error(response.error);
     }
     return {
       signature: response.signature,
-      message,
+      token,
     };
   }
 
