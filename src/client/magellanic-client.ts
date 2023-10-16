@@ -6,8 +6,7 @@ import { readFileSync } from 'fs';
 import Go from '../crypto/wasm-exec.helper';
 import { readFile } from 'fs/promises';
 import { resolve } from 'path';
-import { AuthData } from './types/dilithium-data.interface';
-import { AuthPayload } from './types/auth-payload.interface';
+import { AuthData } from './types/auth-data.interface';
 import { Provider } from './types/provider.type';
 import {
   ProjectKeyMissingError,
@@ -29,8 +28,11 @@ import {
 } from '../crypto';
 import { verify } from 'jsonwebtoken';
 import axiosRetry from 'axios-retry';
+import { AuthPayload } from './types/auth-payload.interface';
 
-const API_URL = 'https://api.magellanic.one/public-api/workloads';
+const API_URL =
+  (process.env.MAGELLANIC_API_URL || 'https://api.magellanic.ai') +
+  '/public-api/workloads';
 const ID_HEADER_NAME = 'magellanic-workload-id';
 
 /**
@@ -141,6 +143,7 @@ export class MagellanicClient {
         token: k8sToken,
         projectKey: this.projectKey,
         apiKey: this.apiKey,
+        type: 'sdk',
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);
