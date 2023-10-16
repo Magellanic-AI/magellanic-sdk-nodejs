@@ -141,7 +141,7 @@ export class MagellanicClient {
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);
-      const { token, tokenExpiryDate, authData } = response.data;
+      const { token, tokenExpiryDate, ...authData } = response.data;
       this.token = token;
       this.authData = authData;
       this.axiosInstance.interceptors.request.use((config) => {
@@ -373,7 +373,7 @@ export class MagellanicClient {
     const timeout =
       new Date(response.data.tokenExpiryDate).getTime() -
       new Date().getTime() -
-      1000;
+      30 * 1000;
     setTimeout(() => this.rotateToken(), timeout);
   }
 
