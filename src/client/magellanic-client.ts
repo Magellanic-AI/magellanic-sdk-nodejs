@@ -28,6 +28,7 @@ import {
   DilithiumMode,
 } from '../crypto';
 import { verify } from 'jsonwebtoken';
+import axiosRetry from 'axios-retry';
 
 const API_URL = 'https://api.magellanic.one/public-api/workloads';
 const ID_HEADER_NAME = 'magellanic-workload-id';
@@ -107,7 +108,9 @@ export class MagellanicClient {
     this.provider = <Provider>provider;
     this.axiosInstance = axios.create({
       baseURL: API_URL,
+      timeout: 15000,
     });
+    axiosRetry(this.axiosInstance, { shouldResetTimeout: true });
   }
 
   /**
@@ -142,7 +145,6 @@ export class MagellanicClient {
 
       const response = await this.axiosInstance.post(`auth`, payload);
       const { token, tokenExpiryDate, ...authData } = response.data;
-      console.log(response.data);
       this.token = token;
       this.authData = authData;
       this.axiosInstance.interceptors.request.use((config) => {
