@@ -141,12 +141,9 @@ export class MagellanicClient {
       };
 
       const response = await this.axiosInstance.post(`auth`, payload);
-      let tokenExpiryDate: string;
-      ({
-        authData: this.authData,
-        token: this.token,
-        tokenExpiryDate,
-      } = response.data);
+      const { token, tokenExpiryDate, authData } = response.data;
+      this.token = token;
+      this.authData = authData;
       this.axiosInstance.interceptors.request.use((config) => {
         config.headers[ID_HEADER_NAME] = this.authData?.id;
         return config;
