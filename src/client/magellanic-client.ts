@@ -371,7 +371,7 @@ export class MagellanicClient {
   // TODO: handle errors
   private async rotateToken(): Promise<void> {
     const payload = await this.createIdentityPayload();
-    const response = await this.axiosInstance.post('pull-tokens', payload);
+    const response = await this.axiosInstance.post('rotate-token', payload);
     this.token = response.data.token;
     const timeout =
       new Date(response.data.tokenExpiryDate).getTime() -
