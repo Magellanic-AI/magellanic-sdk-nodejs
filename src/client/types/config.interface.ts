@@ -1,11 +1,9 @@
 import { Provider } from './provider.type';
 
-export interface AuthPayload {
+export interface Config {
   providerType?: Provider;
   apiKey?: string;
   name?: string;
-  token?: string;
   projectKey: string;
-  type: 'sdk';
   roleKey?: string;
 }

@@ -1,4 +1,3 @@
-import { v4 as uuid } from 'uuid';
 import axios, { AxiosInstance, isAxiosError } from 'axios';
 import { Request } from 'express';
 import { ClientOptions } from './types';
@@ -26,9 +25,12 @@ import {
   KyberGenerateKeysResponse,
   DilithiumMode,
 } from '../crypto';
-import { verify } from 'jsonwebtoken';
+import { JwtPayload, verify } from 'jsonwebtoken';
 import axiosRetry from 'axios-retry';
 import { AuthPayload } from './types/auth-payload.interface';
+import { Config } from './types/config.interface';
+import { ValidationOptions } from './types/validation-options.interface';
+import { ForbiddenError } from './errors/forbidden.error';
 
 const API_URL =
   (process.env.MAGELLANIC_API_URL || 'https://api.magellanic.ai') +
@@ -40,10 +42,7 @@ const ID_HEADER_NAME = 'magellanic-workload-id';
  */
 export class MagellanicClient {
   private readonly axiosInstance: AxiosInstance;
-  private readonly name: string;
-  private readonly projectKey: string;
-  private readonly provider?: Provider;
-  private readonly apiKey?: string;
+  private readonly config: Config;
 
   private token?: string;
 
@@ -97,17 +96,16 @@ export class MagellanicClient {
       //   provider = 'k8s';
       // }
     }
-    const id = uuid();
     if (!name) {
       name = process.env.MAGELLANIC_WORKLOAD_NAME;
-      if (!name) {
-        name = id;
-      }
     }
-    this.apiKey = clientOptions?.apiKey || process.env.MAGELLANIC_API_KEY;
-    this.projectKey = projectKey;
-    this.name = name;
-    this.provider = <Provider>provider;
+    this.config = {
+      apiKey: clientOptions?.apiKey || process.env.MAGELLANIC_API_KEY,
+      projectKey,
+      providerType: provider ? <Provider>provider : undefined,
+      name,
+      roleKey: clientOptions?.roleKey,
+    };
     this.axiosInstance = axios.create({
       baseURL: API_URL,
       timeout: 15000,
@@ -122,7 +120,7 @@ export class MagellanicClient {
    */
   async authenticate(): Promise<void> {
     let k8sToken;
-    if (this.provider === 'k8s') {
+    if (this.config.providerType === 'k8s') {
       const tokenPath = '/var/run/secrets/kubernetes.io/serviceaccount/token';
       try {
         k8sToken = readFileSync(tokenPath, { encoding: 'utf8' });
@@ -138,11 +136,8 @@ export class MagellanicClient {
     }
     try {
       const payload: AuthPayload = {
-        providerType: this.provider,
-        name: this.name,
+        ...this.config,
         token: k8sToken,
-        projectKey: this.projectKey,
-        apiKey: this.apiKey,
         type: 'sdk',
       };
 
@@ -206,11 +201,12 @@ export class MagellanicClient {
    * If you don't want to pass Express.js Request object, see {@link validateToken} method instead.
    *
    * @param req Express.js Request object
+   * @param validationOptions additional validation options
    * @throws {@link RequestValidationError}
    * @throws {@link NotInitializedError}
    * @throws {@link TokenValidationError}
    */
-  validateRequest(req: Request) {
+  validateRequest(req: Request, validationOptions?: ValidationOptions): void {
     const id = req.header(ID_HEADER_NAME);
     if (!id) {
       throw new RequestValidationError('workload id header not defined');
@@ -220,7 +216,9 @@ export class MagellanicClient {
       throw new RequestValidationError('Authorization header not defined');
     }
     const token = tokenHeader.split(' ')[1];
-    return this.validateToken(id, token);
+    return validationOptions
+      ? this.validateToken(id, token, validationOptions)
+      : this.validateToken(id, token);
   }
 
   /**
@@ -234,21 +232,79 @@ export class MagellanicClient {
    * @throws {@link TokenValidationError}
    * @throws {@link NotInitializedError}
    */
-  validateToken(workloadId: string, token: string) {
+  validateToken(workloadId: string, token: string): void;
+  /**
+   * Method used to validate token. It throws errors on bad requests and returns nothing if
+   * everything is as expected.
+   *
+   * See {@link validateRequest} method if using Express.js
+   *
+   * @param workloadId unique sender's ID (acquired from the "magellanic-workload-id" header)
+   * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
+   * @param validationOptions additional validation options
+   * @throws {@link TokenValidationError}
+   * @throws {@link NotInitializedError}
+   */
+  validateToken(
+    workloadId: string,
+    token: string,
+    validationOptions: ValidationOptions,
+  ): void;
+  validateToken(
+    workloadId: string,
+    token: string,
+    validationOptions?: ValidationOptions,
+  ): void {
     this.checkState();
+    let payload: string | JwtPayload;
     try {
-      const payload = verify(token, this.authData!.publicKey, {
+      payload = verify(token, this.authData!.publicKey, {
         algorithms: ['RS256'],
       });
-      if (
-        typeof payload === 'string' ||
-        !payload.workloadId ||
-        payload.workloadId !== workloadId
-      ) {
-        throw new Error();
-      }
     } catch {
       throw new TokenValidationError('bad token');
+    }
+    if (
+      typeof payload === 'string' ||
+      !payload.workloadId ||
+      payload.workloadId !== workloadId
+    ) {
+      throw new TokenValidationError('bad token');
+    }
+
+    if (validationOptions) {
+      if (
+        !payload[validationOptions.resource] ||
+        !payload[validationOptions.resource][validationOptions.action]
+      ) {
+        throw new TokenValidationError('no required permissions');
+      }
+    }
+  }
+
+  /**
+   * Method used to pull configuration
+   *
+   * @param configId ID of the configuration to pull
+   * @throws {@link NotInitializedError}
+   * @throws {@link ForbiddenError}
+   */
+  async getConfig(configId: string): Promise<Record<string, unknown>> {
+    this.checkState();
+    try {
+      const response = await this.axiosInstance.post<Record<string, unknown>>(
+        'config',
+        {
+          configId,
+        },
+      );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
   }
 
