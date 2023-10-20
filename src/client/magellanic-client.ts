@@ -1,6 +1,6 @@
 import axios, { AxiosInstance, isAxiosError } from 'axios';
 import { Request } from 'express';
-import { ClientOptions } from './types';
+import { ClientOptions, ValidationOptions } from './types';
 import { readFileSync } from 'fs';
 import Go from '../crypto/wasm-exec.helper';
 import { readFile } from 'fs/promises';
@@ -14,6 +14,7 @@ import {
   RequestValidationError,
   TokenValidationError,
   WasmError,
+  ForbiddenError,
 } from './errors';
 import { CryptoService } from '../crypto/types/interfaces/crypto-service.interface';
 import {
@@ -29,8 +30,6 @@ import { JwtPayload, verify } from 'jsonwebtoken';
 import axiosRetry from 'axios-retry';
 import { AuthPayload } from './types/auth-payload.interface';
 import { Config } from './types/config.interface';
-import { ValidationOptions } from './types/validation-options.interface';
-import { ForbiddenError } from './errors/forbidden.error';
 
 const API_URL =
   (process.env.MAGELLANIC_API_URL || 'https://api.magellanic.ai') +
@@ -104,7 +103,7 @@ export class MagellanicClient {
       projectKey,
       providerType: provider ? <Provider>provider : undefined,
       name,
-      roleKey: clientOptions?.roleKey,
+      roleKey: clientOptions?.roleKey || process.env.MAGELLANIC_ROLE_KEY,
     };
     this.axiosInstance = axios.create({
       baseURL: API_URL,
