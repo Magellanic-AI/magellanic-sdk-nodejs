@@ -10,6 +10,7 @@
 - [name](ClientOptions.md#name)
 - [projectKey](ClientOptions.md#projectkey)
 - [provider](ClientOptions.md#provider)
+- [roleKey](ClientOptions.md#rolekey)
 
 ## Properties
 
@@ -19,7 +20,7 @@
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:9](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/client/types/client-options.interface.ts#L9)
+[src/client/types/client-options.interface.ts:8](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/types/client-options.interface.ts#L8)
 
 ___
 
@@ -29,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:8](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/client/types/client-options.interface.ts#L8)
+[src/client/types/client-options.interface.ts:7](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/types/client-options.interface.ts#L7)
 
 ___
 
@@ -39,7 +40,7 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:6](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/client/types/client-options.interface.ts#L6)
+[src/client/types/client-options.interface.ts:5](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/types/client-options.interface.ts#L5)
 
 ___
 
@@ -49,4 +50,14 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:7](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/client/types/client-options.interface.ts#L7)
+[src/client/types/client-options.interface.ts:6](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/types/client-options.interface.ts#L6)
+
+___
+
+### roleKey
+
+• `Optional` **roleKey**: `string`
+
+#### Defined in
+
+[src/client/types/client-options.interface.ts:9](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/types/client-options.interface.ts#L9)

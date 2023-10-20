@@ -38,7 +38,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/not-initialized.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/client/errors/not-initialized.error.ts#L2)
+[src/client/errors/not-initialized.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/errors/not-initialized.error.ts#L2)
 
 ## Properties
 

@@ -7,6 +7,7 @@
 ### Classes
 
 - [AuthenticateError](classes/AuthenticateError.md)
+- [ForbiddenError](classes/ForbiddenError.md)
 - [MagellanicClient](classes/MagellanicClient.md)
 - [NotInitializedError](classes/NotInitializedError.md)
 - [ProjectKeyMissingError](classes/ProjectKeyMissingError.md)
@@ -23,6 +24,7 @@
 - [KyberDecryptResponse](interfaces/KyberDecryptResponse.md)
 - [KyberEncryptResponse](interfaces/KyberEncryptResponse.md)
 - [KyberGenerateKeysResponse](interfaces/KyberGenerateKeysResponse.md)
+- [ValidationOptions](interfaces/ValidationOptions.md)
 
 ### Type Aliases
 
@@ -37,7 +39,7 @@
 
 #### Defined in
 
-[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/crypto/types/dilithium-mode.type.ts#L1)
+[src/crypto/types/dilithium-mode.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/crypto/types/dilithium-mode.type.ts#L1)
 
 ___
 
@@ -53,4 +55,4 @@ ___
 
 #### Defined in
 
-[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/3ca1172/src/crypto/types/wasm-error.type.ts#L1)
+[src/crypto/types/wasm-error.type.ts:1](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/crypto/types/wasm-error.type.ts#L1)

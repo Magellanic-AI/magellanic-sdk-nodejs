@@ -1,44 +1,50 @@
-[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / ProjectKeyMissingError
+[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / ForbiddenError
 
-# Class: ProjectKeyMissingError
+# Class: ForbiddenError
 
 ## Hierarchy
 
 - `Error`
 
-  ↳ **`ProjectKeyMissingError`**
+  ↳ **`ForbiddenError`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](ProjectKeyMissingError.md#constructor)
+- [constructor](ForbiddenError.md#constructor)
 
 ### Properties
 
-- [message](ProjectKeyMissingError.md#message)
-- [name](ProjectKeyMissingError.md#name)
-- [stack](ProjectKeyMissingError.md#stack)
-- [prepareStackTrace](ProjectKeyMissingError.md#preparestacktrace)
-- [stackTraceLimit](ProjectKeyMissingError.md#stacktracelimit)
+- [message](ForbiddenError.md#message)
+- [name](ForbiddenError.md#name)
+- [stack](ForbiddenError.md#stack)
+- [prepareStackTrace](ForbiddenError.md#preparestacktrace)
+- [stackTraceLimit](ForbiddenError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](ProjectKeyMissingError.md#capturestacktrace)
+- [captureStackTrace](ForbiddenError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new ProjectKeyMissingError**()
+• **new ForbiddenError**(`message?`)
 
-#### Overrides
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message?` | `string` |
+
+#### Inherited from
 
 Error.constructor
 
 #### Defined in
 
-[src/client/errors/project-key-missing.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/errors/project-key-missing.error.ts#L2)
+node_modules/typescript/lib/lib.es5.d.ts:1073
 
 ## Properties
 
