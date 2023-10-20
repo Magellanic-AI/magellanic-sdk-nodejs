@@ -1,6 +1,6 @@
 {
   "name": "@magellanic/magellanic-sdk",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "SDK to connect to Magellanic",
   "scripts": {
     "prepare": "yarn build",
