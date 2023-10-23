@@ -273,8 +273,9 @@ export class MagellanicClient {
 
     if (validationOptions) {
       if (
-        !payload[validationOptions.resource] ||
-        !payload[validationOptions.resource][validationOptions.action]
+        !payload.resources ||
+        !payload.resources[validationOptions.resource] ||
+        !payload.resources[validationOptions.resource][validationOptions.action]
       ) {
         throw new TokenValidationError('no required permissions');
       }
