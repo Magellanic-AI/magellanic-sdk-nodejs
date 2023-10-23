@@ -435,7 +435,7 @@ export class MagellanicClient {
     const timeout =
       new Date(response.data.tokenExpiryDate).getTime() -
       new Date().getTime() -
-      30 * 1000;
+      10 * 1000;
     setTimeout(() => this.rotateToken(), timeout);
   }
 
