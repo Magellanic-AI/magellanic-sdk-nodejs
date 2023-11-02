@@ -35,6 +35,7 @@ const API_URL =
   (process.env.MAGELLANIC_API_URL || 'https://api.magellanic.ai') +
   '/public-api/workloads';
 const ID_HEADER_NAME = 'magellanic-workload-id';
+const AUTH_HEADER_NAME = 'magellanic-authorization';
 
 /**
  * Magellanic SDK Client base class
@@ -150,7 +151,7 @@ export class MagellanicClient {
       });
       await this.instantiateWasm();
       const timeout =
-        new Date(tokenExpiryDate).getTime() - new Date().getTime() - 30 * 1000;
+        new Date(tokenExpiryDate).getTime() - new Date().getTime() - 10 * 1000;
       setTimeout(() => this.rotateToken(), timeout);
     } catch (err) {
       if (isAxiosError(err)) {
@@ -189,7 +190,7 @@ export class MagellanicClient {
   generateHeaders(): Record<string, string> {
     this.checkState();
     return {
-      Authorization: `Bearer ${this.getMyToken()}`,
+      [AUTH_HEADER_NAME]: this.getMyToken(),
       [ID_HEADER_NAME]: this.authData!.id,
     };
   }
@@ -208,11 +209,13 @@ export class MagellanicClient {
   validateRequest(req: Request, validationOptions?: ValidationOptions): void {
     const id = req.header(ID_HEADER_NAME);
     if (!id) {
-      throw new RequestValidationError('workload id header not defined');
+      throw new RequestValidationError(`${ID_HEADER_NAME} header not defined`);
     }
-    const tokenHeader = req.header('Authorization');
+    const tokenHeader = req.header(AUTH_HEADER_NAME);
     if (!tokenHeader) {
-      throw new RequestValidationError('Authorization header not defined');
+      throw new RequestValidationError(
+        `${AUTH_HEADER_NAME} header not defined`,
+      );
     }
     const token = tokenHeader.split(' ')[1];
     return validationOptions
@@ -227,7 +230,7 @@ export class MagellanicClient {
    * See {@link validateRequest} method if using Express.js
    *
    * @param workloadId unique sender's ID (acquired from the "magellanic-workload-id" header)
-   * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
+   * @param token sender's token (acquired from the "magellanic-authorization" header)
    * @throws {@link TokenValidationError}
    * @throws {@link NotInitializedError}
    */
@@ -239,7 +242,7 @@ export class MagellanicClient {
    * See {@link validateRequest} method if using Express.js
    *
    * @param workloadId unique sender's ID (acquired from the "magellanic-workload-id" header)
-   * @param token sender's token (acquired from the "Authorization" header. Remove the "Bearer " prefix first)
+   * @param token sender's token (acquired from the "magellanic-authorization" header)
    * @param validationOptions additional validation options
    * @throws {@link TokenValidationError}
    * @throws {@link NotInitializedError}
@@ -292,9 +295,11 @@ export class MagellanicClient {
   async getConfig(configId: string): Promise<Record<string, unknown>> {
     this.checkState();
     try {
+      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<Record<string, unknown>>(
         'config',
         {
+          ...authPayload,
           configId,
         },
       );
