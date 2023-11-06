@@ -38,7 +38,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/project-key-missing.error.ts:2](https://gitlab.com/magellanic/platform/magellanic-ciem/magellanic-ciem-sdk/-/blob/87cc13f/src/client/errors/project-key-missing.error.ts#L2)
+[src/client/errors/project-key-missing.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/errors/project-key-missing.error.ts#L2)
 
 ## Properties
 

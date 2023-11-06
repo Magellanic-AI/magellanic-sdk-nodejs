@@ -59,7 +59,7 @@ export class MagellanicClient {
    * @param clientOptions
    * @throws {@link AuthenticateError}
    * @throws {@link ProjectKeyMissingError} if projectKey is missing
-   * @returns authenticated {@link MagellanicClient} instance
+   * @returns {@link MagellanicClient | authenticated} instance
    */
   static async createClient(
     clientOptions?: ClientOptions,
@@ -211,13 +211,12 @@ export class MagellanicClient {
     if (!id) {
       throw new RequestValidationError(`${ID_HEADER_NAME} header not defined`);
     }
-    const tokenHeader = req.header(AUTH_HEADER_NAME);
-    if (!tokenHeader) {
+    const token = req.header(AUTH_HEADER_NAME);
+    if (!token) {
       throw new RequestValidationError(
         `${AUTH_HEADER_NAME} header not defined`,
       );
     }
-    const token = tokenHeader.split(' ')[1];
     return validationOptions
       ? this.validateToken(id, token, validationOptions)
       : this.validateToken(id, token);
