@@ -407,7 +407,7 @@ export class MagellanicClient {
    * @param mode Dilithium mode - 2 or 3
    * @param privateKey Dilithium private key generated using {@link dilithiumGenerateKeys}
    * @param message message you want to sign
-   * @throws {@link WasmError}
+   * @throws {@link ForbiddenError}
    */
   async dilithiumSign(
     mode: DilithiumMode,
@@ -436,7 +436,7 @@ export class MagellanicClient {
    * @param publicKey Dilithium public key generated using {@link dilithiumGenerateKeys}
    * @param message message received
    * @param signature signature received
-   * @throws {@link WasmError}
+   * @throws {@link ForbiddenError}
    */
   async dilithiumVerify(
     mode: DilithiumMode,

@@ -20,7 +20,7 @@
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:8](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/types/client-options.interface.ts#L8)
+[src/client/types/client-options.interface.ts:8](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/client-options.interface.ts#L8)
 
 ___
 
@@ -30,7 +30,7 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:7](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/types/client-options.interface.ts#L7)
+[src/client/types/client-options.interface.ts:7](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/client-options.interface.ts#L7)
 
 ___
 
@@ -40,7 +40,7 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:5](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/types/client-options.interface.ts#L5)
+[src/client/types/client-options.interface.ts:5](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/client-options.interface.ts#L5)
 
 ___
 
@@ -50,7 +50,7 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:6](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/types/client-options.interface.ts#L6)
+[src/client/types/client-options.interface.ts:6](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/client-options.interface.ts#L6)
 
 ___
 
@@ -60,4 +60,4 @@ ___
 
 #### Defined in
 
-[src/client/types/client-options.interface.ts:9](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/types/client-options.interface.ts#L9)
+[src/client/types/client-options.interface.ts:9](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/client-options.interface.ts#L9)

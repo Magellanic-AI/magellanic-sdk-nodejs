@@ -46,7 +46,7 @@ The constructor of the "MagellanicClient" class.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:78](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L78)
+[src/client/magellanic-client.ts:72](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L72)
 
 ## Methods
 
@@ -66,7 +66,7 @@ Method used to authenticate the workload.
 
 #### Defined in
 
-[src/client/magellanic-client.ts:121](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L121)
+[src/client/magellanic-client.ts:115](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L115)
 
 ___
 
@@ -88,11 +88,11 @@ Method used to generate Dilithium private key/public key pair.
 
 **`Throws`**
 
-[WasmError](WasmError.md)
+[ForbiddenError](ForbiddenError.md)
 
 #### Defined in
 
-[src/client/magellanic-client.ts:371](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L371)
+[src/client/magellanic-client.ts:385](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L385)
 
 ___
 
@@ -116,11 +116,11 @@ Method used to generate a signature of provided message using Dilithium.
 
 **`Throws`**
 
-[WasmError](WasmError.md)
+[ForbiddenError](ForbiddenError.md)
 
 #### Defined in
 
-[src/client/magellanic-client.ts:390](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L390)
+[src/client/magellanic-client.ts:412](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L412)
 
 ___
 
@@ -128,7 +128,7 @@ ___
 
 ▸ **dilithiumVerify**(`mode`, `publicKey`, `message`, `signature`): `Promise`<[`DilithiumVerifyResponse`](../interfaces/DilithiumVerifyResponse.md)\>
 
-Method used to verify a signature of provided message using Dilithium.
+Method used to verify the signature of provided message using Dilithium.
 
 #### Parameters
 
@@ -145,11 +145,11 @@ Method used to verify a signature of provided message using Dilithium.
 
 **`Throws`**
 
-[WasmError](WasmError.md)
+[ForbiddenError](ForbiddenError.md)
 
 #### Defined in
 
-[src/client/magellanic-client.ts:415](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L415)
+[src/client/magellanic-client.ts:441](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L441)
 
 ___
 
@@ -177,7 +177,7 @@ headers object
 
 #### Defined in
 
-[src/client/magellanic-client.ts:190](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L190)
+[src/client/magellanic-client.ts:183](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L183)
 
 ___
 
@@ -207,7 +207,7 @@ Method used to pull configuration
 
 #### Defined in
 
-[src/client/magellanic-client.ts:294](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L294)
+[src/client/magellanic-client.ts:287](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L287)
 
 ___
 
@@ -229,7 +229,7 @@ the latest token of this workload
 
 #### Defined in
 
-[src/client/magellanic-client.ts:173](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L173)
+[src/client/magellanic-client.ts:166](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L166)
 
 ___
 
@@ -252,11 +252,11 @@ Method used to decrypt a secret using ciphertext
 
 **`Throws`**
 
-[WasmError](WasmError.md)
+[ForbiddenError](ForbiddenError.md)
 
 #### Defined in
 
-[src/client/magellanic-client.ts:351](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L351)
+[src/client/magellanic-client.ts:360](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L360)
 
 ___
 
@@ -278,11 +278,11 @@ Method used to generate Kyber secret and ciphertext
 
 **`Throws`**
 
-[WasmError](WasmError.md)
+[ForbiddenError](ForbiddenError.md)
 
 #### Defined in
 
-[src/client/magellanic-client.ts:335](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L335)
+[src/client/magellanic-client.ts:336](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L336)
 
 ___
 
@@ -298,11 +298,11 @@ Method used to generate Kyber private key/public key pair.
 
 **`Throws`**
 
-[WasmError](WasmError.md)
+[ForbiddenError](ForbiddenError.md)
 
 #### Defined in
 
-[src/client/magellanic-client.ts:320](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L320)
+[src/client/magellanic-client.ts:313](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L313)
 
 ___
 
@@ -339,7 +339,7 @@ If you don't want to pass Express.js Request object, see [validateToken](Magella
 
 #### Defined in
 
-[src/client/magellanic-client.ts:209](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L209)
+[src/client/magellanic-client.ts:202](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L202)
 
 ___
 
@@ -373,7 +373,7 @@ See [validateRequest](MagellanicClient.md#validaterequest) method if using Expre
 
 #### Defined in
 
-[src/client/magellanic-client.ts:236](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L236)
+[src/client/magellanic-client.ts:229](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L229)
 
 ▸ **validateToken**(`workloadId`, `token`, `validationOptions`): `void`
 
@@ -404,7 +404,7 @@ See [validateRequest](MagellanicClient.md#validaterequest) method if using Expre
 
 #### Defined in
 
-[src/client/magellanic-client.ts:249](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L249)
+[src/client/magellanic-client.ts:242](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L242)
 
 ___
 
@@ -440,4 +440,4 @@ await magellanicClient.authenticate();
 
 #### Defined in
 
-[src/client/magellanic-client.ts:64](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/client/magellanic-client.ts#L64)
+[src/client/magellanic-client.ts:58](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/magellanic-client.ts#L58)

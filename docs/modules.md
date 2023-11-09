@@ -13,7 +13,6 @@
 - [ProjectKeyMissingError](classes/ProjectKeyMissingError.md)
 - [RequestValidationError](classes/RequestValidationError.md)
 - [TokenValidationError](classes/TokenValidationError.md)
-- [WasmError](classes/WasmError.md)
 
 ### Interfaces
 
@@ -29,7 +28,6 @@
 ### Type Aliases
 
 - [DilithiumMode](modules.md#dilithiummode)
-- [TWasmError](modules.md#twasmerror)
 
 ## Type Aliases
 
@@ -39,20 +37,4 @@
 
 #### Defined in
 
-[src/crypto/types/dilithium-mode.type.ts:1](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/crypto/types/dilithium-mode.type.ts#L1)
-
-___
-
-### TWasmError
-
-Ƭ **TWasmError**: `Object`
-
-#### Type declaration
-
-| Name | Type |
-| :------ | :------ |
-| `error` | `string` |
-
-#### Defined in
-
-[src/crypto/types/wasm-error.type.ts:1](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/0e4ce76/src/crypto/types/wasm-error.type.ts#L1)
+[src/client/types/dilithium-mode.type.ts:1](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/dilithium-mode.type.ts#L1)
