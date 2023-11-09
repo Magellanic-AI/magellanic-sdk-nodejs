@@ -5,12 +5,11 @@
   "scripts": {
     "prepare": "yarn build",
     "prepack": "yarn build",
-    "build": "rimraf dist && concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types' 'yarn:copy:wasm'",
+    "build": "rimraf dist && concurrently 'yarn:build:cjs' 'yarn:build:es' 'yarn:build:types'",
     "build:cjs": "tsc -p tsconfig.cjs.json && echo '{\"type\":\"commonjs\"}' > dist/cjs/package.json",
     "build:es": "tsc -p tsconfig.es.json && echo '{\"type\":\"module\"}' > dist/es/package.json",
     "build:types": "tsc -p tsconfig.types.json",
     "docs": "typedoc --excludePrivate --plugin typedoc-plugin-markdown src/index.ts",
-    "copy:wasm": "cpx 'src/crypto/crypto-ext.wasm' 'dist/crypto'"
   },
   "main": "./dist/cjs/index.js",
   "module": "./dist/es/index.js",
