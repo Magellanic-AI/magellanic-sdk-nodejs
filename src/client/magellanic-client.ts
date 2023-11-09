@@ -1,10 +1,17 @@
 import axios, { AxiosInstance, isAxiosError } from 'axios';
 import { Request } from 'express';
-import { ClientOptions, ValidationOptions } from './types';
+import {
+  ClientOptions,
+  ValidationOptions,
+  DilithiumGenerateKeysResponse,
+  DilithiumSignResponse,
+  DilithiumVerifyResponse,
+  KyberDecryptResponse,
+  KyberEncryptResponse,
+  KyberGenerateKeysResponse,
+  DilithiumMode,
+} from './types';
 import { readFileSync } from 'fs';
-import Go from '../crypto/wasm-exec.helper';
-import { readFile } from 'fs/promises';
-import { resolve } from 'path';
 import { AuthData } from './types/auth-data.interface';
 import { Provider } from './types/provider.type';
 import {
@@ -13,19 +20,8 @@ import {
   NotInitializedError,
   RequestValidationError,
   TokenValidationError,
-  WasmError,
   ForbiddenError,
 } from './errors';
-import { CryptoService } from '../crypto/types/interfaces/crypto-service.interface';
-import {
-  DilithiumGenerateKeysResponse,
-  DilithiumSignResponse,
-  DilithiumVerifyResponse,
-  KyberDecryptResponse,
-  KyberEncryptResponse,
-  KyberGenerateKeysResponse,
-  DilithiumMode,
-} from '../crypto';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import axiosRetry from 'axios-retry';
 import { AuthPayload } from './types/auth-payload.interface';
@@ -45,8 +41,6 @@ export class MagellanicClient {
   private readonly config: Config;
 
   private token?: string;
-
-  private cryptoService?: CryptoService;
   private authData?: AuthData;
 
   /**
@@ -149,7 +143,6 @@ export class MagellanicClient {
         config.headers[ID_HEADER_NAME] = this.authData?.id;
         return config;
       });
-      await this.instantiateWasm();
       const timeout =
         new Date(tokenExpiryDate).getTime() - new Date().getTime() - 10 * 1000;
       setTimeout(() => this.rotateToken(), timeout);
@@ -315,30 +308,46 @@ export class MagellanicClient {
   /**
    * Method used to generate Kyber private key/public key pair.
    *
-   * @throws {@link WasmError}
+   * @throws {@link ForbiddenError}
    */
   async kyberGenerateKeys(): Promise<KyberGenerateKeysResponse> {
-    await this.instantiateWasm();
-    const kyberGenerateKeysResponse = this.cryptoService!.kyberGenerateKeys();
-    if ('error' in kyberGenerateKeysResponse) {
-      throw new WasmError(kyberGenerateKeysResponse.error);
+    try {
+      const authPayload = this.createIdentityPayload();
+      const response = await this.axiosInstance.post<KyberGenerateKeysResponse>(
+        'kyber/generate-keys',
+        authPayload,
+      );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
-    return kyberGenerateKeysResponse;
   }
 
   /**
    * Method used to generate Kyber secret and ciphertext
    *
    * @param publicKey Kyber public key generated using {@link kyberGenerateKeys}
-   * @throws {@link WasmError}
+   * @throws {@link ForbiddenError}
    */
   async kyberEncrypt(publicKey: string): Promise<KyberEncryptResponse> {
-    await this.instantiateWasm();
-    const kyberEncryptResponse = this.cryptoService!.kyberEncrypt(publicKey);
-    if ('error' in kyberEncryptResponse) {
-      throw new WasmError(kyberEncryptResponse.error);
+    try {
+      const authPayload = this.createIdentityPayload();
+      const response = await this.axiosInstance.post<KyberEncryptResponse>(
+        'kyber/encrypt',
+        { ...authPayload, publicKey },
+      );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
-    return kyberEncryptResponse;
   }
 
   /**
@@ -346,38 +355,51 @@ export class MagellanicClient {
    *
    * @param privateKey Kyber public key generated using {@link kyberGenerateKeys}
    * @param ciphertext Kyber ciphertext generated using {@link kyberEncrypt}
-   * @throws {@link WasmError}
+   * @throws {@link ForbiddenError}
    */
   async kyberDecrypt(
     privateKey: string,
     ciphertext: string,
   ): Promise<KyberDecryptResponse> {
-    await this.instantiateWasm();
-    const kyberDecryptResponse = this.cryptoService!.kyberDecrypt(
-      privateKey,
-      ciphertext,
-    );
-    if ('error' in kyberDecryptResponse) {
-      throw new WasmError(kyberDecryptResponse.error);
+    try {
+      const authPayload = this.createIdentityPayload();
+      const response = await this.axiosInstance.post<KyberDecryptResponse>(
+        'kyber/decrypt',
+        { ...authPayload, privateKey, ciphertext },
+      );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
-    return kyberDecryptResponse;
   }
 
   /**
    * Method used to generate Dilithium private key/public key pair.
    * @param mode Dilithium mode - 2 or 3
-   * @throws {@link WasmError}
+   * @throws {@link ForbiddenError}
    */
   async dilithiumGenerateKeys(
     mode: DilithiumMode,
   ): Promise<DilithiumGenerateKeysResponse> {
-    await this.instantiateWasm();
-    const dilithiumGenerateKeysResponse =
-      this.cryptoService!.dilithiumGenerateKeys(mode);
-    if ('error' in dilithiumGenerateKeysResponse) {
-      throw new Error(dilithiumGenerateKeysResponse.error);
+    try {
+      const authPayload = this.createIdentityPayload();
+      const response =
+        await this.axiosInstance.post<DilithiumGenerateKeysResponse>(
+          'dilithium/generate-keys',
+          { ...authPayload, mode },
+        );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
-    return dilithiumGenerateKeysResponse;
   }
 
   /**
@@ -392,20 +414,24 @@ export class MagellanicClient {
     privateKey: string,
     message: string,
   ): Promise<DilithiumSignResponse> {
-    await this.instantiateWasm();
-    const dilithiumSignResponse = this.cryptoService!.dilithiumSign(
-      mode,
-      privateKey,
-      message,
-    );
-    if ('error' in dilithiumSignResponse) {
-      throw new Error(dilithiumSignResponse.error);
+    try {
+      const authPayload = this.createIdentityPayload();
+      const response = await this.axiosInstance.post<DilithiumSignResponse>(
+        'dilithium/sign',
+        { ...authPayload, mode, privateKey, data: message },
+      );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
-    return dilithiumSignResponse;
   }
 
   /**
-   * Method used to verify a signature of provided message using Dilithium.
+   * Method used to verify the signature of provided message using Dilithium.
    * @param mode Dilithium mode - 2 or 3. Use the same as when signing.
    * @param publicKey Dilithium public key generated using {@link dilithiumGenerateKeys}
    * @param message message received
@@ -418,17 +444,26 @@ export class MagellanicClient {
     message: string,
     signature: string,
   ): Promise<DilithiumVerifyResponse> {
-    await this.instantiateWasm();
-    const dilithiumVerifyResponse = this.cryptoService!.dilithiumVerify(
-      mode,
-      publicKey,
-      message,
-      signature,
-    );
-    if ('error' in dilithiumVerifyResponse) {
-      throw new Error(dilithiumVerifyResponse.error);
+    try {
+      const authPayload = this.createIdentityPayload();
+      const response = await this.axiosInstance.post<DilithiumVerifyResponse>(
+        'dilithium/sign',
+        {
+          ...authPayload,
+          mode,
+          publicKey,
+          data: message,
+          signature,
+        },
+      );
+      return response.data;
+    } catch (err) {
+      if (isAxiosError(err)) {
+        throw new ForbiddenError(err.response?.data);
+      } else {
+        throw err;
+      }
     }
-    return dilithiumVerifyResponse;
   }
 
   // TODO: handle errors
@@ -445,51 +480,9 @@ export class MagellanicClient {
 
   private async createIdentityPayload() {
     const token = this.token!;
-    const response = this.cryptoService!.dilithiumSign(
-      this.authData!.mode,
-      this.authData!.dilithiumPrivateKey,
-      token,
-    );
-    if ('error' in response) {
-      throw new Error(response.error);
-    }
     return {
-      signature: response.signature,
       token,
     };
-  }
-
-  private async instantiateWasm() {
-    if (!this.cryptoService) {
-      const go = new Go();
-      const buf = await readFile(
-        resolve(__dirname, '..', '..', 'crypto', 'crypto-ext.wasm'),
-      );
-      const wasm = await WebAssembly.instantiate(buf, go.importObject);
-      go.run(wasm.instance);
-      const {
-        // @ts-ignore
-        mglDilithiumGenerateKeys,
-        // @ts-ignore
-        mglDilithiumSign,
-        // @ts-ignore
-        mglDilithiumVerify,
-        // @ts-ignore
-        mglKyberGenerateKeys,
-        // @ts-ignore
-        mglKyberEncrypt,
-        // @ts-ignore
-        mglKyberDecrypt,
-      } = globalThis;
-      this.cryptoService = {
-        dilithiumGenerateKeys: mglDilithiumGenerateKeys,
-        dilithiumSign: mglDilithiumSign,
-        dilithiumVerify: mglDilithiumVerify,
-        kyberGenerateKeys: mglKyberGenerateKeys,
-        kyberEncrypt: mglKyberEncrypt,
-        kyberDecrypt: mglKyberDecrypt,
-      };
-    }
   }
 
   private checkState() {

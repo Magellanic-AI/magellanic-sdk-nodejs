@@ -1,4 +1,4 @@
-import { DilithiumMode } from '../../crypto';
+import { DilithiumMode } from '.';
 
 export interface AuthData {
   id: string;
