@@ -411,7 +411,7 @@ export class MagellanicClient {
     try {
       const response = await this.axiosInstance.post<DilithiumSignResponse>(
         'dilithium/sign',
-        { mode, privateKey, data: message },
+        { mode, privateKey, message },
       );
       return response.data;
     } catch (err) {
@@ -443,7 +443,7 @@ export class MagellanicClient {
         {
           mode,
           publicKey,
-          data: message,
+          message,
           signature,
         },
       );
