@@ -141,6 +141,7 @@ export class MagellanicClient {
       this.authData = authData;
       this.axiosInstance.interceptors.request.use((config) => {
         config.headers[ID_HEADER_NAME] = this.authData?.id;
+        config.headers[AUTH_HEADER_NAME] = token;
         return config;
       });
       const timeout =
@@ -287,11 +288,9 @@ export class MagellanicClient {
   async getConfig(configId: string): Promise<Record<string, unknown>> {
     this.checkState();
     try {
-      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<Record<string, unknown>>(
         'config',
         {
-          ...authPayload,
           configId,
         },
       );
@@ -312,10 +311,8 @@ export class MagellanicClient {
    */
   async kyberGenerateKeys(): Promise<KyberGenerateKeysResponse> {
     try {
-      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<KyberGenerateKeysResponse>(
         'kyber/generate-keys',
-        authPayload,
       );
       return response.data;
     } catch (err) {
@@ -335,10 +332,9 @@ export class MagellanicClient {
    */
   async kyberEncrypt(publicKey: string): Promise<KyberEncryptResponse> {
     try {
-      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<KyberEncryptResponse>(
         'kyber/encrypt',
-        { ...authPayload, publicKey },
+        { publicKey },
       );
       return response.data;
     } catch (err) {
@@ -362,10 +358,9 @@ export class MagellanicClient {
     ciphertext: string,
   ): Promise<KyberDecryptResponse> {
     try {
-      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<KyberDecryptResponse>(
         'kyber/decrypt',
-        { ...authPayload, privateKey, ciphertext },
+        { privateKey, ciphertext },
       );
       return response.data;
     } catch (err) {
@@ -386,11 +381,10 @@ export class MagellanicClient {
     mode: DilithiumMode,
   ): Promise<DilithiumGenerateKeysResponse> {
     try {
-      const authPayload = this.createIdentityPayload();
       const response =
         await this.axiosInstance.post<DilithiumGenerateKeysResponse>(
           'dilithium/generate-keys',
-          { ...authPayload, mode },
+          { mode },
         );
       return response.data;
     } catch (err) {
@@ -415,10 +409,9 @@ export class MagellanicClient {
     message: string,
   ): Promise<DilithiumSignResponse> {
     try {
-      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<DilithiumSignResponse>(
         'dilithium/sign',
-        { ...authPayload, mode, privateKey, data: message },
+        { mode, privateKey, data: message },
       );
       return response.data;
     } catch (err) {
@@ -445,11 +438,9 @@ export class MagellanicClient {
     signature: string,
   ): Promise<DilithiumVerifyResponse> {
     try {
-      const authPayload = this.createIdentityPayload();
       const response = await this.axiosInstance.post<DilithiumVerifyResponse>(
         'dilithium/sign',
         {
-          ...authPayload,
           mode,
           publicKey,
           data: message,
@@ -468,21 +459,17 @@ export class MagellanicClient {
 
   // TODO: handle errors
   private async rotateToken(): Promise<void> {
-    const payload = await this.createIdentityPayload();
-    const response = await this.axiosInstance.post('rotate-token', payload);
+    const response = await this.axiosInstance.post('rotate-token');
     this.token = response.data.token;
+    this.axiosInstance.interceptors.request.use((config) => {
+      config.headers[AUTH_HEADER_NAME] = this.token;
+      return config;
+    });
     const timeout =
       new Date(response.data.tokenExpiryDate).getTime() -
       new Date().getTime() -
       10 * 1000;
     setTimeout(() => this.rotateToken(), timeout);
-  }
-
-  private async createIdentityPayload() {
-    const token = this.token!;
-    return {
-      token,
-    };
   }
 
   private checkState() {
