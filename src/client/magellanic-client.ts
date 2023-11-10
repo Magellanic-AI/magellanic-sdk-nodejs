@@ -439,7 +439,7 @@ export class MagellanicClient {
   ): Promise<DilithiumVerifyResponse> {
     try {
       const response = await this.axiosInstance.post<DilithiumVerifyResponse>(
-        'dilithium/sign',
+        'dilithium/verify',
         {
           mode,
           publicKey,
