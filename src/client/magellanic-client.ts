@@ -140,6 +140,7 @@ export class MagellanicClient {
       this.token = token;
       this.authData = authData;
       this.axiosInstance.interceptors.request.use((config) => {
+        console.log(token);
         config.headers[ID_HEADER_NAME] = this.authData?.id;
         config.headers[AUTH_HEADER_NAME] = token;
         return config;
@@ -461,11 +462,6 @@ export class MagellanicClient {
   private async rotateToken(): Promise<void> {
     const response = await this.axiosInstance.post('rotate-token');
     this.token = response.data.token;
-    this.axiosInstance.interceptors.request.use((config) => {
-      config.headers[AUTH_HEADER_NAME] = this.token;
-      config.headers[ID_HEADER_NAME] = this.authData!.id;
-      return config;
-    });
     const timeout =
       new Date(response.data.tokenExpiryDate).getTime() -
       new Date().getTime() -
