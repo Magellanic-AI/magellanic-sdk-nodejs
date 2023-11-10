@@ -463,6 +463,7 @@ export class MagellanicClient {
     this.token = response.data.token;
     this.axiosInstance.interceptors.request.use((config) => {
       config.headers[AUTH_HEADER_NAME] = this.token;
+      config.headers[ID_HEADER_NAME] = this.authData!.id;
       return config;
     });
     const timeout =
