@@ -1,4 +1,4 @@
-import axios, { AxiosInstance, isAxiosError } from 'axios';
+import axios, { AxiosError, AxiosInstance, isAxiosError } from 'axios';
 import { Request } from 'express';
 import {
   ClientOptions,
@@ -21,17 +21,21 @@ import {
   RequestValidationError,
   TokenValidationError,
   ForbiddenError,
+  BadArgumentError,
+  UnauthorizedError,
 } from './errors';
 import { JwtPayload, verify } from 'jsonwebtoken';
 import axiosRetry from 'axios-retry';
 import { AuthPayload } from './types/auth-payload.interface';
 import { Config } from './types/config.interface';
+import { UnknownError } from './errors/unknown.error';
 
 const API_URL =
   (process.env.MAGELLANIC_API_URL || 'https://api.magellanic.ai') +
   '/public-api/workloads';
 const ID_HEADER_NAME = 'magellanic-workload-id';
 const AUTH_HEADER_NAME = 'magellanic-authorization';
+const SECRET_HEADER_NAME = 'magellanic-workload-secret';
 
 /**
  * Magellanic SDK Client base class
@@ -142,6 +146,7 @@ export class MagellanicClient {
       this.axiosInstance.interceptors.request.use((config) => {
         config.headers[ID_HEADER_NAME] = this.authData?.id;
         config.headers[AUTH_HEADER_NAME] = this.getMyToken();
+        config.headers[SECRET_HEADER_NAME] = this.authData?.secret;
         return config;
       });
       const timeout =
@@ -282,8 +287,9 @@ export class MagellanicClient {
    * Method used to pull configuration
    *
    * @param configId ID of the configuration to pull
-   * @throws {@link NotInitializedError}
-   * @throws {@link ForbiddenError}
+   * @throws {@link BadArgumentError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async getConfig(configId: string): Promise<Record<string, unknown>> {
     this.checkState();
@@ -297,7 +303,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -307,7 +313,8 @@ export class MagellanicClient {
   /**
    * Method used to generate Kyber private key/public key pair.
    *
-   * @throws {@link ForbiddenError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async kyberGenerateKeys(): Promise<KyberGenerateKeysResponse> {
     try {
@@ -317,7 +324,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -328,7 +335,9 @@ export class MagellanicClient {
    * Method used to generate Kyber secret and ciphertext
    *
    * @param publicKey Kyber public key generated using {@link kyberGenerateKeys}
-   * @throws {@link ForbiddenError}
+   * @throws {@link BadArgumentError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async kyberEncrypt(publicKey: string): Promise<KyberEncryptResponse> {
     try {
@@ -339,7 +348,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -351,7 +360,9 @@ export class MagellanicClient {
    *
    * @param privateKey Kyber public key generated using {@link kyberGenerateKeys}
    * @param ciphertext Kyber ciphertext generated using {@link kyberEncrypt}
-   * @throws {@link ForbiddenError}
+   * @throws {@link BadArgumentError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async kyberDecrypt(
     privateKey: string,
@@ -365,7 +376,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -375,7 +386,9 @@ export class MagellanicClient {
   /**
    * Method used to generate Dilithium private key/public key pair.
    * @param mode Dilithium mode - 2 or 3
-   * @throws {@link ForbiddenError}
+   * @throws {@link BadArgumentError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async dilithiumGenerateKeys(
     mode: DilithiumMode,
@@ -389,7 +402,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -401,7 +414,9 @@ export class MagellanicClient {
    * @param mode Dilithium mode - 2 or 3
    * @param privateKey Dilithium private key generated using {@link dilithiumGenerateKeys}
    * @param message message you want to sign
-   * @throws {@link ForbiddenError}
+   * @throws {@link BadArgumentError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async dilithiumSign(
     mode: DilithiumMode,
@@ -416,7 +431,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -429,7 +444,9 @@ export class MagellanicClient {
    * @param publicKey Dilithium public key generated using {@link dilithiumGenerateKeys}
    * @param message message received
    * @param signature signature received
-   * @throws {@link ForbiddenError}
+   * @throws {@link BadArgumentError}
+   * @throws {@link UnauthorizedError}
+   * @throws {@link UnknownError}
    */
   async dilithiumVerify(
     mode: DilithiumMode,
@@ -450,7 +467,7 @@ export class MagellanicClient {
       return response.data;
     } catch (err) {
       if (isAxiosError(err)) {
-        throw new ForbiddenError(err.response?.data);
+        throw this.handleAxiosError(err);
       } else {
         throw err;
       }
@@ -466,6 +483,17 @@ export class MagellanicClient {
       new Date().getTime() -
       10 * 1000;
     setTimeout(() => this.rotateToken(), timeout);
+  }
+
+  private handleAxiosError(error: AxiosError) {
+    if (error.response?.status === 400) {
+      return new BadArgumentError(error.response?.data);
+    } else if (error.response?.status === 401) {
+      return new UnauthorizedError(error.response?.data);
+    } else if (error.response?.status === 403) {
+      return new ForbiddenError(error.response?.data);
+    }
+    return new UnknownError(error.response?.data);
   }
 
   private checkState() {
