@@ -36,15 +36,15 @@
 
 | Name | Type |
 | :------ | :------ |
-| `message?` | `string` |
+| `message?` | `any` |
 
-#### Inherited from
+#### Overrides
 
 Error.constructor
 
 #### Defined in
 
-node_modules/typescript/lib/lib.es5.d.ts:1073
+[src/client/errors/forbidden.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/errors/forbidden.error.ts#L2)
 
 ## Properties
 

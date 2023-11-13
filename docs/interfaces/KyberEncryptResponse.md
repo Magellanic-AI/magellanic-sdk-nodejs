@@ -17,7 +17,7 @@
 
 #### Defined in
 
-[src/client/types/kyber-encrypt-response.interface.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/kyber-encrypt-response.interface.ts#L2)
+[src/client/types/kyber-encrypt-response.interface.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/types/kyber-encrypt-response.interface.ts#L2)
 
 ___
 
@@ -27,4 +27,4 @@ ___
 
 #### Defined in
 
-[src/client/types/kyber-encrypt-response.interface.ts:3](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/kyber-encrypt-response.interface.ts#L3)
+[src/client/types/kyber-encrypt-response.interface.ts:3](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/types/kyber-encrypt-response.interface.ts#L3)

@@ -7,12 +7,14 @@
 ### Classes
 
 - [AuthenticateError](classes/AuthenticateError.md)
+- [BadArgumentError](classes/BadArgumentError.md)
 - [ForbiddenError](classes/ForbiddenError.md)
 - [MagellanicClient](classes/MagellanicClient.md)
 - [NotInitializedError](classes/NotInitializedError.md)
 - [ProjectKeyMissingError](classes/ProjectKeyMissingError.md)
 - [RequestValidationError](classes/RequestValidationError.md)
 - [TokenValidationError](classes/TokenValidationError.md)
+- [UnauthorizedError](classes/UnauthorizedError.md)
 
 ### Interfaces
 
@@ -37,4 +39,4 @@
 
 #### Defined in
 
-[src/client/types/dilithium-mode.type.ts:1](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/dilithium-mode.type.ts#L1)
+[src/client/types/dilithium-mode.type.ts:1](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/types/dilithium-mode.type.ts#L1)

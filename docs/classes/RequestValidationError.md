@@ -44,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/request-validation.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/errors/request-validation.error.ts#L2)
+[src/client/errors/request-validation.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/errors/request-validation.error.ts#L2)
 
 ## Properties
 

@@ -1,36 +1,42 @@
-[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / NotInitializedError
+[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / UnauthorizedError
 
-# Class: NotInitializedError
+# Class: UnauthorizedError
 
 ## Hierarchy
 
 - `Error`
 
-  ↳ **`NotInitializedError`**
+  ↳ **`UnauthorizedError`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](NotInitializedError.md#constructor)
+- [constructor](UnauthorizedError.md#constructor)
 
 ### Properties
 
-- [message](NotInitializedError.md#message)
-- [name](NotInitializedError.md#name)
-- [stack](NotInitializedError.md#stack)
-- [prepareStackTrace](NotInitializedError.md#preparestacktrace)
-- [stackTraceLimit](NotInitializedError.md#stacktracelimit)
+- [message](UnauthorizedError.md#message)
+- [name](UnauthorizedError.md#name)
+- [stack](UnauthorizedError.md#stack)
+- [prepareStackTrace](UnauthorizedError.md#preparestacktrace)
+- [stackTraceLimit](UnauthorizedError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](NotInitializedError.md#capturestacktrace)
+- [captureStackTrace](UnauthorizedError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new NotInitializedError**()
+• **new UnauthorizedError**(`message?`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message?` | `any` |
 
 #### Overrides
 
@@ -38,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/not-initialized.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/errors/not-initialized.error.ts#L2)
+[src/client/errors/unauthorized.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/errors/unauthorized.error.ts#L2)
 
 ## Properties
 

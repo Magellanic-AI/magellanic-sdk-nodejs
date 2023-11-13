@@ -1,36 +1,42 @@
-[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / NotInitializedError
+[@magellanic/magellanic-sdk](../README.md) / [Exports](../modules.md) / BadArgumentError
 
-# Class: NotInitializedError
+# Class: BadArgumentError
 
 ## Hierarchy
 
 - `Error`
 
-  ↳ **`NotInitializedError`**
+  ↳ **`BadArgumentError`**
 
 ## Table of contents
 
 ### Constructors
 
-- [constructor](NotInitializedError.md#constructor)
+- [constructor](BadArgumentError.md#constructor)
 
 ### Properties
 
-- [message](NotInitializedError.md#message)
-- [name](NotInitializedError.md#name)
-- [stack](NotInitializedError.md#stack)
-- [prepareStackTrace](NotInitializedError.md#preparestacktrace)
-- [stackTraceLimit](NotInitializedError.md#stacktracelimit)
+- [message](BadArgumentError.md#message)
+- [name](BadArgumentError.md#name)
+- [stack](BadArgumentError.md#stack)
+- [prepareStackTrace](BadArgumentError.md#preparestacktrace)
+- [stackTraceLimit](BadArgumentError.md#stacktracelimit)
 
 ### Methods
 
-- [captureStackTrace](NotInitializedError.md#capturestacktrace)
+- [captureStackTrace](BadArgumentError.md#capturestacktrace)
 
 ## Constructors
 
 ### constructor
 
-• **new NotInitializedError**()
+• **new BadArgumentError**(`message?`)
+
+#### Parameters
+
+| Name | Type |
+| :------ | :------ |
+| `message?` | `any` |
 
 #### Overrides
 
@@ -38,7 +44,7 @@ Error.constructor
 
 #### Defined in
 
-[src/client/errors/not-initialized.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/errors/not-initialized.error.ts#L2)
+[src/client/errors/bad-argument.error.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/errors/bad-argument.error.ts#L2)
 
 ## Properties
 

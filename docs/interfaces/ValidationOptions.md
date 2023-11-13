@@ -19,7 +19,7 @@ action
 
 #### Defined in
 
-[src/client/types/validation-options.interface.ts:7](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/validation-options.interface.ts#L7)
+[src/client/types/validation-options.interface.ts:7](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/types/validation-options.interface.ts#L7)
 
 ___
 
@@ -31,4 +31,4 @@ key of the resource
 
 #### Defined in
 
-[src/client/types/validation-options.interface.ts:6](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/validation-options.interface.ts#L6)
+[src/client/types/validation-options.interface.ts:6](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/types/validation-options.interface.ts#L6)

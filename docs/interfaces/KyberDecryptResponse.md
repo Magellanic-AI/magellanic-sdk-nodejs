@@ -16,4 +16,4 @@
 
 #### Defined in
 
-[src/client/types/kyber-decrypt-response.interface.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/76346bd/src/client/types/kyber-decrypt-response.interface.ts#L2)
+[src/client/types/kyber-decrypt-response.interface.ts:2](https://github.com/Magellanic-AI/magellanic-sdk-nodejs/blob/7e16304/src/client/types/kyber-decrypt-response.interface.ts#L2)
