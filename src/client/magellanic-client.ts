@@ -206,19 +206,48 @@ export class MagellanicClient {
    * @throws {@link TokenValidationError}
    */
   validateRequest(req: Request, validationOptions?: ValidationOptions): void {
-    const id = req.header(ID_HEADER_NAME);
-    if (!id) {
-      throw new RequestValidationError(`${ID_HEADER_NAME} header not defined`);
+    let succeeded = true;
+    let errMessage: string | undefined;
+    const timestamp = new Date().toISOString();
+    try {
+      const id = req.header(ID_HEADER_NAME);
+      if (!id) {
+        throw new RequestValidationError(
+          `${ID_HEADER_NAME} header not defined`,
+        );
+      }
+      const token = req.header(AUTH_HEADER_NAME);
+      if (!token) {
+        throw new RequestValidationError(
+          `${AUTH_HEADER_NAME} header not defined`,
+        );
+      }
+      validationOptions
+        ? this.validateToken(id, token, validationOptions)
+        : this.validateToken(id, token);
+    } catch (err: any) {
+      succeeded = false;
+      errMessage = err.message;
+      throw err;
+    } finally {
+      this.axiosInstance
+        .post('log-request', {
+          timestamp,
+          errMessage,
+          succeeded,
+          request: {
+            method: req.method,
+            path: req.path,
+            protocol: req.protocol,
+            params: req.params,
+            body: req.body,
+            headers: req.headers,
+            cookies: req.cookies,
+            remoteAddress: req.socket.remoteAddress,
+          },
+        })
+        .catch(() => undefined);
     }
-    const token = req.header(AUTH_HEADER_NAME);
-    if (!token) {
-      throw new RequestValidationError(
-        `${AUTH_HEADER_NAME} header not defined`,
-      );
-    }
-    return validationOptions
-      ? this.validateToken(id, token, validationOptions)
-      : this.validateToken(id, token);
   }
 
   /**
