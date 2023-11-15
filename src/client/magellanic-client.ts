@@ -206,35 +206,39 @@ export class MagellanicClient {
    * @throws {@link TokenValidationError}
    */
   validateRequest(req: Request, validationOptions?: ValidationOptions): void {
-    let succeeded = true;
-    let errMessage: string | undefined;
+    let rejected = false;
+    let rejectedReason: string | undefined;
     const timestamp = new Date().toISOString();
+    let sourceId: string | undefined;
+    let sourceToken: string | undefined;
     try {
-      const id = req.header(ID_HEADER_NAME);
-      if (!id) {
+      sourceId = req.header(ID_HEADER_NAME);
+      if (!sourceId) {
         throw new RequestValidationError(
           `${ID_HEADER_NAME} header not defined`,
         );
       }
-      const token = req.header(AUTH_HEADER_NAME);
-      if (!token) {
+      sourceToken = req.header(AUTH_HEADER_NAME);
+      if (!sourceToken) {
         throw new RequestValidationError(
           `${AUTH_HEADER_NAME} header not defined`,
         );
       }
       validationOptions
-        ? this.validateToken(id, token, validationOptions)
-        : this.validateToken(id, token);
+        ? this.validateToken(sourceId, sourceToken, validationOptions)
+        : this.validateToken(sourceId, sourceToken);
     } catch (err: any) {
-      succeeded = false;
-      errMessage = err.message;
+      rejected = true;
+      rejectedReason = err.message;
       throw err;
     } finally {
       this.axiosInstance
         .post('log-request', {
           timestamp,
-          errMessage,
-          succeeded,
+          rejectedReason,
+          rejected,
+          sourceId,
+          sourceToken,
           request: {
             method: req.method,
             path: req.path,
